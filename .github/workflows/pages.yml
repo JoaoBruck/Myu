@@ -30,15 +30,52 @@ jobs:
       - name: Prepare MYU v5
         shell: bash
         run: |
-          rm -rf _site _extract
-          mkdir -p _site _extract
+          rm -rf _site _extract _extract_v5
+          mkdir -p _site _extract _extract_v5
           unzip -q MYU_17_40_prototype_v5.zip -d _extract
           if [ -d "_extract/MYU_17_40_prototype_v5" ]; then
             cp -a _extract/MYU_17_40_prototype_v5/. _site/
           else
             cp -a _extract/. _site/
           fi
+
+          # Keep a cache-safe direct path while older service workers age out.
+          mkdir -p _site/v5
+          unzip -q MYU_17_40_prototype_v5.zip -d _extract_v5
+          if [ -d "_extract_v5/MYU_17_40_prototype_v5" ]; then
+            cp -a _extract_v5/MYU_17_40_prototype_v5/. _site/v5/
+          else
+            cp -a _extract_v5/. _site/v5/
+          fi
+
+          # Replace the previous cache-first worker with a self-updating worker.
+          cat > _site/sw.js <<'EOF'
+          const CACHE='myu-1740-v5-live-2';
+          self.addEventListener('install', event => {
+            self.skipWaiting();
+          });
+          self.addEventListener('activate', event => {
+            event.waitUntil((async () => {
+              const keys = await caches.keys();
+              await Promise.all(keys.map(k => caches.delete(k)));
+              await self.clients.claim();
+              const clients = await self.clients.matchAll({type:'window', includeUncontrolled:true});
+              await Promise.all(clients.map(c => c.navigate(c.url).catch(()=>null)));
+            })());
+          });
+          self.addEventListener('fetch', event => {
+            if (event.request.method !== 'GET') return;
+            event.respondWith(
+              fetch(event.request).catch(() => caches.match(event.request))
+            );
+          });
+          EOF
+          cp _site/sw.js _site/v5/sw.js
+
           test -f _site/index.html
+          test -f _site/assets/backgrounds/exterior.webp
+          test -f _site/assets/sprites/witch_walk_atlas.webp
+          test -f _site/v5/index.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
