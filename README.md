@@ -1,19 +1,26 @@
 # MYU
 
-Protótipo jogável **MYU — 17:40 v5**.
+Protótipo jogável **MYU — 17:40 v7**.
 
-A build publicada no GitHub Pages vem de `MYU_17_40_prototype_v5.zip` e inclui:
+A versão atual publicada inclui:
 
 - cenário externo HD;
 - interior da cafeteria;
-- sprite 2D nativo da Bruxa em 4 direções × 4 frames;
-- colisão por máscara;
-- oclusão por profundidade;
-- transição rua ↔ cafeteria;
-- controles mobile e desktop.
+- sprite 2D em 4 direções × 4 frames;
+- sprite menor e melhor integrado ao cenário;
+- sombra sob os pés;
+- offsets de animação por frame;
+- câmera mais afastada com dead zone;
+- movimento analógico mais fluido;
+- velocidade da animação proporcional ao movimento;
+- HUD temporário;
+- botão A contextual;
+- transições mais rápidas;
+- colisão e oclusão refinadas para mobile.
 
 ## Jogar
 
 https://joaobruck.github.io/Myu/
 
-O workflow de Pages extrai a build v5 e publica seu conteúdo automaticamente a cada push na `main`.
+Caminho direto da versão:
+https://joaobruck.github.io/Myu/v7/
