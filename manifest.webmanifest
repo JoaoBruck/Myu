@@ -1,0 +1,11 @@
+{
+  "name": "MYU — 17:40",
+  "short_name": "MYU",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#171529",
+  "theme_color": "#171529",
+  "description": "Protótipo jogável mobile-first de Myu."
+}
