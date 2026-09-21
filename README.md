@@ -1,31 +1,19 @@
-# MYU — 17:40 playable prototype
+# MYU
 
-Protótipo mobile-first do jogo de Myu.
+Protótipo jogável **MYU — 17:40 v5**.
 
-## O que já funciona
+A build publicada no GitHub Pages vem de `MYU_17_40_prototype_v5.zip` e inclui:
 
-- movimentação com aceleração, desaceleração e colisão física;
-- cenário externo 17:40 com cafeteria, rua, calçada, mobiliário e limites reais;
-- entrada e saída da cafeteria;
-- cenário interno com mesas, balcão e colisões;
-- controles de toque para celular (analógico + botão A);
-- WASD/setas e E/espaço no desktop;
-- câmera suave e pixel-art procedural sem dependências externas;
-- PWA/offline básico via service worker.
+- cenário externo HD;
+- interior da cafeteria;
+- sprite 2D nativo da Bruxa em 4 direções × 4 frames;
+- colisão por máscara;
+- oclusão por profundidade;
+- transição rua ↔ cafeteria;
+- controles mobile e desktop.
 
 ## Jogar
 
-Se o GitHub Pages estiver habilitado para este repositório, o protótipo fica em:
-
 https://joaobruck.github.io/Myu/
 
-No celular, abra em navegador moderno. Funciona em retrato, mas a composição fica melhor em paisagem.
-
-## Controles
-
-- Celular: analógico virtual à esquerda; botão A à direita para interagir.
-- Desktop: WASD/setas para mover; E, Espaço ou Enter para interagir.
-
-## Direção
-
-Este é um vertical slice técnico para provar que o visual pixel-art de Myu pode funcionar como cenário explorável de verdade. A arte atual é procedural/provisória; a intenção é substituir progressivamente por sprites e tiles finais mantendo a mesma física e estrutura.
+O workflow de Pages extrai a build v5 e publica seu conteúdo automaticamente a cada push na `main`.

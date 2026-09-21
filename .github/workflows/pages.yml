@@ -1,4 +1,4 @@
-name: Deploy MYU prototype to Pages
+name: Deploy MYU v5 to Pages
 
 on:
   push:
@@ -23,12 +23,28 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
-      - name: Upload site
+
+      - name: Prepare MYU v5
+        shell: bash
+        run: |
+          rm -rf _site _extract
+          mkdir -p _site _extract
+          unzip -q MYU_17_40_prototype_v5.zip -d _extract
+          if [ -d "_extract/MYU_17_40_prototype_v5" ]; then
+            cp -a _extract/MYU_17_40_prototype_v5/. _site/
+          else
+            cp -a _extract/. _site/
+          fi
+          test -f _site/index.html
+
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
-      - name: Deploy to Pages
+          path: _site
+
+      - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
