@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta name="theme-color" content="#071018"/>
+  <title>MYU — Capítulo 3</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css"/>
+</head>
+<body>
+<div class="noise"></div>
+<div class="app">
+  <header class="topbar">
+    <button class="brand" id="homeBtn" aria-label="Voltar ao início">
+      <span class="brand-mark"></span>
+      <span>MYU / CAPÍTULO 3</span>
+    </button>
+    <div class="top-meta">
+      <span id="sceneLabel">MIRANTE</span>
+      <span class="dot">•</span>
+      <span id="progressLabel">0%</span>
+      <button class="ghost" id="archiveBtn">ARQUIVO <b id="archiveCount">0</b></button>
+    </div>
+  </header>
+
+  <aside class="rail" aria-label="Progresso do capítulo">
+    <div class="rail-title">RASTRO</div>
+    <button data-scene="0" class="rail-stop active"><i></i><span>MIRANTE</span></button>
+    <button data-scene="1" class="rail-stop"><i></i><span>ARQUIVO</span></button>
+    <button data-scene="2" class="rail-stop"><i></i><span>RAVI</span></button>
+    <button data-scene="3" class="rail-stop"><i></i><span>RESTAURANTE</span></button>
+    <button data-scene="4" class="rail-stop"><i></i><span>GOUVEIA</span></button>
+  </aside>
+
+  <main class="stage" id="stage">
+    <section class="scene visible" data-scene="0">
+      <article class="paper reading">
+        <div class="kicker">CAPÍTULO 3</div>
+        <h1>Ela ia voltar.</h1>
+        <p class="lead">— Ela ia voltar — disse Leroy.</p>
+        <p>Ele estendeu a fotografia. Derick não tirou as mãos dos bolsos.</p>
+        <p>O mirante da Rota 9 ficava num pedaço de serra onde ninguém devia parar. Para cima, Candeia desaparecia atrás de dois morros; para baixo, o asfalto descia até a costa.</p>
+        <p>Leroy havia preparado aquela conversa inteira no ônibus. A fotografia, o caderno, a ordem das perguntas. Derick começou justamente pela parte que ele não tinha preparado.</p>
+        <div class="scene-actions">
+          <button class="primary next">CONTINUAR</button>
+        </div>
+      </article>
+      <button class="floating-doc" data-open-doc="photo">
+        <small>DOCUMENTO DISPONÍVEL</small>
+        <strong>Fotografia da festa</strong>
+        <span>abrir segunda camada →</span>
+      </button>
+    </section>
+
+    <section class="scene" data-scene="1">
+      <article class="paper reading">
+        <div class="kicker">ARQUIVO DE TRANSIÇÃO</div>
+        <h1>Uma coisa no lugar errado.</h1>
+        <p>Derick abriu o envelope que havia recebido ao completar dezoito anos. Entre registros médicos e administrativos, uma autorização de transporte estava datada no mesmo dia do desaparecimento.</p>
+        <p>A van da casa-lar não ficou indisponível depois da busca. Já estava fora de uso desde o sábado.</p>
+        <div class="message-thread">
+          <span class="msg me">desde sábado.</span>
+          <span class="msg him">17h46 ele saiu com ela.</span>
+          <span class="msg me">com a van.</span>
+          <span class="msg him">sim.</span>
+        </div>
+        <div class="scene-actions">
+          <button class="secondary prev">VOLTAR</button>
+          <button class="primary next">CONTINUAR</button>
+        </div>
+      </article>
+      <button class="floating-doc urgent" data-open-doc="transport">
+        <small>NOVO DOCUMENTO</small>
+        <strong>OT-0812-44</strong>
+        <span>pedido de transporte →</span>
+      </button>
+    </section>
+
+    <section class="scene" data-scene="2">
+      <article class="paper reading">
+        <div class="kicker">OFICINA / RAVI NAIR</div>
+        <h1>A página que não está.</h1>
+        <p>Ravi alinhou as folhas sobre a bancada. A amostra T-19 existia. A remessa existia. O índice passava de 4-A para 4-C.</p>
+        <blockquote>— Não tenho essa página.</blockquote>
+        <p>A ausência deixou de ser apenas falta de informação. Havia uma folha citada, encaminhada e ausente do procedimento.</p>
+        <div class="scene-actions">
+          <button class="secondary prev">VOLTAR</button>
+          <button class="primary next">CONTINUAR</button>
+        </div>
+      </article>
+      <div class="evidence-stack">
+        <button data-open-doc="occurrence"><em>T-01</em><strong>Espelho da ocorrência</strong><span>18h29 · 19h08</span></button>
+        <button data-open-doc="fiber"><em>T-19</em><strong>Triagem de fibras</strong><span>fibras amarelas no cinto dianteiro</span></button>
+        <button class="missing" data-open-doc="missing"><em>4-B</em><strong>Anexo ausente</strong><span>citado no índice · não localizado</span></button>
+      </div>
+    </section>
+
+    <section class="scene" data-scene="3">
+      <div class="investigation-shell">
+        <div class="investigation-head">
+          <div>
+            <div class="kicker">RESTAURANTE / COMPARAÇÃO</div>
+            <h1>Monte a noite sem adivinhar o que falta.</h1>
+          </div>
+          <div class="hint">toque nos registros para conectá-los</div>
+        </div>
+        <div class="timeline" id="timeline">
+          <div class="track"></div>
+          <button class="mark" style="--x:10%" data-mark="1741"><i></i><b>17h41</b><span>portão encostado</span></button>
+          <button class="mark" style="--x:30%" data-mark="1746"><i></i><b>17h46</b><span>Vicente sai com a van</span></button>
+          <button class="mark" style="--x:70%" data-mark="1829"><i></i><b>18h29</b><span>primeira chamada</span></button>
+          <button class="mark" style="--x:90%" data-mark="1908"><i></i><b>19h08</b><span>patrulha chega</span></button>
+          <div class="gap-card" id="gapCard">
+            <small>INTERVALO</small>
+            <strong>43 MINUTOS</strong>
+            <span>não são resposta; são espaço.</span>
+          </div>
+        </div>
+        <div class="compare-tray">
+          <button class="compare-card" data-compare="b12"><em>B-12</em><strong>Caderno da busca</strong><span>17h22 · 17h41 · 17h46</span></button>
+          <button class="compare-card" data-compare="t01"><em>T-01</em><strong>Ocorrência</strong><span>18h29 · 19h08</span></button>
+        </div>
+        <div class="scene-actions wide">
+          <button class="secondary prev">VOLTAR</button>
+          <button class="primary next" id="timelineNext" disabled>CONTINUAR</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene" data-scene="4">
+      <div class="confront-shell">
+        <div class="porch">
+          <div class="kicker">CASA DE GOUVEIA / VARANDA</div>
+          <h1>Não escolha uma resposta.</h1>
+          <p class="sub">Escolha o que colocar sobre a mesa.</p>
+
+          <div class="dialogue">
+            <div class="speaker">DERICK</div>
+            <p>— O Anexo 4-B chegou ao senhor?</p>
+          </div>
+          <div class="dialogue answer">
+            <div class="speaker">GOUVEIA</div>
+            <p>— Não.</p>
+          </div>
+
+          <div class="reveal-box" id="revealBox">
+            <small>CONTRADIÇÃO</small>
+            <p>Uma afirmação segura demais. Falta uma evidência capaz de fazê-lo corrigir algo que jurou nunca ter visto.</p>
+          </div>
+        </div>
+
+        <aside class="evidence-tray">
+          <div class="tray-title">EVIDÊNCIAS À MÃO</div>
+          <button data-use="fiber"><em>T-19</em><strong>fibras amarelas</strong></button>
+          <button data-use="missing"><em>4-B</em><strong>anexo ausente</strong></button>
+          <button data-use="photo"><em>FOTO</em><strong>jaqueta amarela</strong></button>
+          <button data-use="bait" class="bait"><em>ISCA</em><strong>“algodão”</strong></button>
+          <div class="use-status" id="useStatus">Selecione uma evidência.</div>
+        </aside>
+
+        <div class="scene-actions wide confront-actions">
+          <button class="secondary prev">VOLTAR</button>
+          <button class="primary" id="finishBtn" disabled>ENCERRAR TESTE</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene finale" data-scene="5">
+      <div class="final-card">
+        <div class="kicker">PROGRESSO SALVO</div>
+        <h1>A investigação lembra do que você tocou.</h1>
+        <p>Seu arquivo, os documentos abertos e o ponto da leitura ficam salvos neste dispositivo.</p>
+        <div class="progress-bar"><i id="finalProgress"></i></div>
+        <div class="final-grid">
+          <div>
+            <small>DOCUMENTOS ARQUIVADOS</small>
+            <strong id="finalDocs">0 / 5</strong>
+          </div>
+          <div>
+            <small>CONTRADIÇÃO</small>
+            <strong id="finalContradiction">NÃO RESOLVIDA</strong>
+          </div>
+        </div>
+        <div class="scene-actions center">
+          <button class="secondary" id="resetBtn">RECOMEÇAR TESTE</button>
+          <button class="primary" id="resumeBtn">CONTINUAR DE ONDE PAREI</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <button class="drawer-close" id="drawerClose">×</button>
+  <div id="drawerContent"></div>
+  <button class="primary archive-action" id="archiveAction">ARQUIVAR</button>
+</aside>
+
+<script src="./app.js"></script>
+</body>
+</html>
