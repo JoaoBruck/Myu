@@ -1,0 +1,78 @@
+name: Godot 4.7.2 Engine Validation
+
+on:
+  push:
+    branches:
+      - godot/rebuild
+    paths:
+      - "godot/**"
+      - ".github/workflows/godot-validate.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Godot 4.7.2 and Web templates
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -L --fail --retry 3             -o /tmp/godot.zip             https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          chmod +x /tmp/godot/Godot_v4.7.2-stable_linux.x86_64
+
+          curl -L --fail --retry 3             -o /tmp/godot_templates.tpz             https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_export_templates.tpz
+          rm -rf /tmp/godot-templates
+          mkdir -p /tmp/godot-templates "$HOME/.local/share/godot/export_templates/4.7.2.stable"
+          unzip -q /tmp/godot_templates.tpz -d /tmp/godot-templates
+          cp -a /tmp/godot-templates/templates/. "$HOME/.local/share/godot/export_templates/4.7.2.stable/"
+
+          /tmp/godot/Godot_v4.7.2-stable_linux.x86_64 --version
+          test -f "$HOME/.local/share/godot/export_templates/4.7.2.stable/web_release.zip"
+
+      - name: Import project with the engine
+        shell: bash
+        run: |
+          set -euo pipefail
+          LOG=/tmp/godot-import.log
+          /tmp/godot/Godot_v4.7.2-stable_linux.x86_64             --headless             --path godot             --editor             --quit 2>&1 | tee "$LOG"
+          if grep -E "SCRIPT ERROR:|Parse Error:|Failed to load script|Invalid call|Invalid access" "$LOG"; then
+            echo "Godot reported a script/import error."
+            exit 1
+          fi
+
+      - name: Run main scene smoke test
+        shell: bash
+        run: |
+          set -euo pipefail
+          LOG=/tmp/godot-runtime.log
+          /tmp/godot/Godot_v4.7.2-stable_linux.x86_64             --headless             --path godot             --quit-after 5 2>&1 | tee "$LOG"
+          if grep -E "SCRIPT ERROR:|Parse Error:|Failed to load script|Invalid call|Invalid access" "$LOG"; then
+            echo "Godot reported a runtime error."
+            exit 1
+          fi
+
+      - name: Export Web build with Godot
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/myu-web
+          mkdir -p /tmp/myu-web
+          LOG=/tmp/godot-web-export.log
+          /tmp/godot/Godot_v4.7.2-stable_linux.x86_64             --headless             --path godot             --verbose --export-release "Web" /tmp/myu-web/index.html 2>&1 | tee "$LOG"
+          if grep -E "SCRIPT ERROR:|Parse Error:|Failed to load script|Invalid call|Invalid access|Export failed" "$LOG"; then
+            echo "Godot reported a Web export error."
+            exit 1
+          fi
+          test -f /tmp/myu-web/index.html
+          test -f /tmp/myu-web/index.wasm
+          test -f /tmp/myu-web/index.pck
+          echo "Godot Web export validated."

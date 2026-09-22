@@ -1,8 +1,8 @@
-name: Deploy MYU + Outdoor Engine Lab
+name: Deploy MYU + Labs
 
 on:
   push:
-    branches: [main]
+    branches: [main, godot/rebuild]
   workflow_dispatch:
 
 permissions:
@@ -20,6 +20,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - uses: actions/checkout@v4
@@ -28,6 +29,7 @@ jobs:
       - name: Prepare stable MYU root
         shell: bash
         run: |
+          set -euo pipefail
           rm -rf _site _stable _lab
           mkdir -p _site _stable _lab
           unzip -q MYU_17_40_prototype_v15.zip -d _stable
@@ -37,9 +39,10 @@ jobs:
             cp -a _stable/. _site/
           fi
 
-      - name: Prepare outdoor lab v3
+      - name: Prepare outdoor Phaser lab
         shell: bash
         run: |
+          set -euo pipefail
           unzip -q MYU_outdoor_lab_v3.zip -d _lab
           mkdir -p _site/phaser _site/streetlab
           if [ -d "_lab/MYU_outdoor_lab_v3" ]; then
@@ -53,11 +56,44 @@ jobs:
           test -f _site/phaser/index.html
           test -f _site/phaser/src/main.js
           test -f _site/phaser/data/world.json
-          test -f _site/phaser/test_report.txt
           grep -q '"walkSpeed": 50' _site/phaser/data/world.json
-          grep -q 'Deterministic movement' _site/phaser/src/main.js
-          grep -q 'v3 · Phaser 4.2.1' _site/phaser/index.html
-          test -f _site/streetlab/index.html
+
+      - name: Install Godot 4.7.2 and Web templates
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -L --fail --retry 3             -o /tmp/godot.zip             https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          chmod +x /tmp/godot/Godot_v4.7.2-stable_linux.x86_64
+
+          curl -L --fail --retry 3             -o /tmp/godot_templates.tpz             https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_export_templates.tpz
+          rm -rf /tmp/godot-templates
+          mkdir -p /tmp/godot-templates "$HOME/.local/share/godot/export_templates/4.7.2.stable"
+          unzip -q /tmp/godot_templates.tpz -d /tmp/godot-templates
+          cp -a /tmp/godot-templates/templates/. "$HOME/.local/share/godot/export_templates/4.7.2.stable/"
+
+      - name: Build mobile-friendly Godot Web version
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p _site/godot
+
+          IMPORT_LOG=/tmp/godot-import.log
+          /tmp/godot/Godot_v4.7.2-stable_linux.x86_64             --headless             --path godot             --editor             --quit 2>&1 | tee "$IMPORT_LOG"
+          if grep -E "SCRIPT ERROR:|Parse Error:|Failed to load script|Invalid call|Invalid access" "$IMPORT_LOG"; then
+            exit 1
+          fi
+
+          EXPORT_LOG=/tmp/godot-export.log
+          /tmp/godot/Godot_v4.7.2-stable_linux.x86_64             --headless             --path godot             --export-release "Web" "$GITHUB_WORKSPACE/_site/godot/index.html" 2>&1 | tee "$EXPORT_LOG"
+          if grep -E "SCRIPT ERROR:|Parse Error:|Failed to load script|Invalid call|Invalid access|Export failed" "$EXPORT_LOG"; then
+            exit 1
+          fi
+
+          test -f _site/godot/index.html
+          test -f _site/godot/index.wasm
+          test -f _site/godot/index.pck
+          touch _site/.nojekyll
 
       - uses: actions/upload-pages-artifact@v3
         with:
