@@ -1,18 +1,18 @@
 # MYU
 
-Protótipo jogável **MYU — 17:40 v9**.
+Protótipo jogável **MYU — 17:40 v10**.
 
-A v9 é a revisão pré-teste:
-- colisões refeitas em máscaras contínuas;
-- recortes de oclusão quebrados removidos;
-- caminho spawn → porta validado nos dois cenários;
-- personagem com collider focado nos pés;
-- caminhada ping-pong, idle breathing, bob, lean e turn pulse;
-- service worker v9 e cache-busting.
+Mudanças:
+- novo interior do café integrado ao jogo;
+- exterior preservado;
+- novas colisões para o interior;
+- transição rua ↔ café;
+- câmera e controles mobile mantidos;
+- animação da personagem refinada;
+- sistema antigo de recortes/oclusão removido.
 
 ## Jogar
-
 https://joaobruck.github.io/Myu/
 
 Versão direta:
-https://joaobruck.github.io/Myu/v9/
+https://joaobruck.github.io/Myu/v10/
