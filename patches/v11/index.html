@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#171529">
+<title>MYU — 17:40 v11</title>
+<link rel="stylesheet" href="style.css?v=11.2">
+<link rel="manifest" href="manifest.webmanifest">
+</head>
+<body>
+<canvas id="game" aria-label="MYU 17:40"></canvas>
+<div id="hud"><div id="pill">Carregando…</div></div>
+<div id="controls">
+  <div id="stickZone"><div id="stickBase"><div id="stickKnob"></div></div></div>
+  <button id="actionBtn" aria-label="Interagir"><span>A</span><small>agir</small></button>
+</div>
+<script src="game.js?v=11.2"></script>
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js?v=11.2').catch(()=>{});
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+:root{--ui:#171529;--txt:#f3eef8}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#120f1f;color:var(--txt);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;touch-action:none;overscroll-behavior:none;user-select:none}
+#game{position:fixed;inset:0;width:100vw;height:100vh;display:block;background:#120f1f;image-rendering:pixelated;image-rendering:crisp-edges}
+#hud{position:fixed;z-index:5;top:0;left:0;right:0;display:flex;justify-content:center;padding:max(10px,env(safe-area-inset-top)) 10px 0;pointer-events:none;transition:opacity .35s ease}
+#hud.hidden{opacity:0}
+#pill{padding:8px 14px;background:#171529aa;border:1px solid #ffffff1f;border-radius:999px;backdrop-filter:blur(6px);font-size:12px;text-align:center;max-width:min(82vw,620px);box-shadow:0 8px 24px #0004;text-shadow:0 1px 2px #000}
+#controls{position:fixed;z-index:6;inset:0;pointer-events:none;padding-bottom:env(safe-area-inset-bottom)}
+#stickZone{position:absolute;left:max(10px,env(safe-area-inset-left));bottom:max(12px,calc(env(safe-area-inset-bottom) + 6px));width:min(25vw,136px);height:min(25vw,136px);pointer-events:auto}
+#stickBase{position:absolute;inset:0;border-radius:50%;background:#17152938;border:2px solid #ffffff18;backdrop-filter:blur(3px);box-shadow:inset 0 0 0 7px #ffffff04}
+#stickKnob{position:absolute;left:29%;top:29%;width:42%;height:42%;border-radius:50%;background:#eeebf4cf;border:2px solid #ffffff38;box-shadow:0 7px 20px #0005}
+#actionBtn{position:absolute;right:max(16px,calc(env(safe-area-inset-right) + 8px));bottom:max(20px,calc(env(safe-area-inset-bottom) + 12px));width:min(16vw,80px);height:min(16vw,80px);border-radius:50%;pointer-events:auto;border:2px solid #ffffff1b;background:#6557898f;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:inset 0 0 0 7px #ffffff06,0 7px 22px #0004;opacity:.38;transition:.16s ease}
+#actionBtn span{font:700 24px ui-monospace,SFMono-Regular,Menlo,monospace;line-height:1}
+#actionBtn small{font:500 8px ui-monospace,SFMono-Regular,Menlo,monospace;opacity:.7;margin-top:2px}
+#actionBtn.near{opacity:.96;transform:scale(1.05);background:#7968a0df}
+#actionBtn:active{transform:scale(.96)}
+@media (orientation:portrait){
+  #stickZone{width:min(27vw,144px);height:min(27vw,144px)}
+  #actionBtn{width:min(18vw,84px);height:min(18vw,84px)}
+  #pill{font-size:11px;max-width:92vw}
+}
+@media (hover:hover) and (pointer:fine){#controls{opacity:.34}#controls:hover{opacity:.85}}

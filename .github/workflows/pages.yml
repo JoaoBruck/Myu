@@ -1,4 +1,4 @@
-name: Deploy MYU v11 to Pages
+name: Deploy MYU v11.2 to Pages
 
 on:
   push:
@@ -27,31 +27,29 @@ jobs:
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
-      - name: Prepare MYU v11
+      - name: Build v11.2 from stable v10 assets
         shell: bash
         run: |
-          rm -rf _site _extract _extract_v11
-          mkdir -p _site _extract _extract_v11
-
-          unzip -q MYU_17_40_prototype_v11.zip -d _extract
-          if [ -d "_extract/MYU_17_40_prototype_v11" ]; then
-            cp -a _extract/MYU_17_40_prototype_v11/. _site/
+          rm -rf _site _extract _version
+          mkdir -p _site _extract _version
+          unzip -q MYU_17_40_prototype_v10.zip -d _extract
+          if [ -d "_extract/MYU_17_40_prototype_v10" ]; then
+            cp -a _extract/MYU_17_40_prototype_v10/. _site/
           else
             cp -a _extract/. _site/
           fi
 
+          cp -a patches/v11/. _site/
+
+          cp -a _site/. _version/
           mkdir -p _site/v11
-          unzip -q MYU_17_40_prototype_v11.zip -d _extract_v11
-          if [ -d "_extract_v11/MYU_17_40_prototype_v11" ]; then
-            cp -a _extract_v11/MYU_17_40_prototype_v11/. _site/v11/
-          else
-            cp -a _extract_v11/. _site/v11/
-          fi
+          cp -a _version/. _site/v11/
 
           test -f _site/index.html
           test -f _site/game.js
+          test -f _site/data/scene.json
           test -f _site/assets/sprites/witch_walk_atlas.webp
-          test -f _site/assets/sprites/shadow_atlas.png
+          test -f _site/assets/backgrounds/exterior.webp
           test -f _site/v11/index.html
 
       - name: Upload Pages artifact
