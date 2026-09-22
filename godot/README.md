@@ -1,18 +1,14 @@
 # MYU — Godot Pixel Art Build
 
-Esta versão substitui o blockout procedural por arte 2D pixelada baseada diretamente nas artes fornecidas para MYU.
+Agora o Godot usa a direção visual real de MYU, não o blockout geométrico.
 
-## Visual
-- cenário Lume Café em pixel art;
-- renderização nearest-neighbor;
-- viewport 512×288;
-- cenário-base em 256×144 escalado exatamente 2×;
-- protagonista em 32×56;
-- quatro direções reais da folha visual: frente, costas, direita e esquerda.
+- Lume Café convertido para 256×144 e escalado 2× com nearest-neighbor;
+- viewport lógico 512×288;
+- protagonista 32×56;
+- quatro direções reais da arte: frente, direita, costas e esquerda;
+- movimento em 8 direções;
+- analógico virtual no celular;
+- chuva separada;
+- assets visuais carregados em runtime a partir de WebP embutido em base64 para manter o build reprodutível no GitHub Pages.
 
-## Controles
-- celular: analógico virtual;
-- desktop: WASD/setas.
-
-## Estado
-A direção visual agora é a arte de MYU, não formas geométricas de debug. A animação completa de 4/6 frames por direção ainda será separada da prancha de animações em uma etapa posterior.
+A próxima etapa visual é separar os 4/6 frames da prancha de animação para AnimatedSprite2D.

@@ -1,14 +1,14 @@
 [gd_scene load_steps=5 format=3]
 
-[ext_resource type="Texture2D" path="res://assets/lume_cafe_pixel.png" id="1_bg"]
+[ext_resource type="Script" path="res://scripts/pixel_scene.gd" id="1_scene"]
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="2_player"]
 [ext_resource type="Script" path="res://scripts/mobile_controls.gd" id="3_mobile"]
 [ext_resource type="Script" path="res://scripts/rain.gd" id="4_rain"]
 
 [node name="Main" type="Node2D"]
+script = ExtResource("1_scene")
 
 [node name="Background" type="Sprite2D" parent="."]
-texture = ExtResource("1_bg")
 position = Vector2(256, 144)
 scale = Vector2(2, 2)
 texture_filter = 1

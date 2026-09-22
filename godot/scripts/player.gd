@@ -4,19 +4,26 @@ const WALK_SPEED := 48.0
 const ACCELERATION := 420.0
 const DECELERATION := 560.0
 
-const TEX_FRONT := preload("res://assets/myu_front.png")
-const TEX_RIGHT := preload("res://assets/myu_right.png")
-const TEX_BACK := preload("res://assets/myu_back.png")
-const TEX_LEFT := preload("res://assets/myu_left.png")
-
 var _touch_input := Vector2.ZERO
 var _facing := Vector2.DOWN
 var _step_clock := 0.0
+var _tex_front: Texture2D
+var _tex_right: Texture2D
+var _tex_back: Texture2D
+var _tex_left: Texture2D
 
 @onready var sprite: Sprite2D = $Sprite2D
 
 func _ready() -> void:
-	sprite.texture = TEX_FRONT
+	_tex_front = _texture_from_b64_webp("res://assets_b64/myu_front.b64")
+	_tex_right = _texture_from_b64_webp("res://assets_b64/myu_right.b64")
+	_tex_back = _texture_from_b64_webp("res://assets_b64/myu_back.b64")
+	_tex_left = _texture_from_b64_webp("res://assets_b64/myu_left.b64")
+	sprite.texture = _tex_front
+	if _tex_front == null or _tex_right == null or _tex_back == null or _tex_left == null:
+		push_error("MYU: one or more directional sprites failed to decode")
+	else:
+		print("MYU_PIXEL_PLAYER_READY")
 
 func set_touch_input(value: Vector2) -> void:
 	_touch_input = value
@@ -39,13 +46,27 @@ func _physics_process(delta: float) -> void:
 		sprite.position.y = -28.0
 
 	move_and_slide()
-
-	# Temporary walkable envelope while the proper tile/collision pass is built.
 	global_position.x = clamp(global_position.x, 18.0, 494.0)
 	global_position.y = clamp(global_position.y, 118.0, 235.0)
 
 func _update_facing() -> void:
 	if abs(_facing.x) > abs(_facing.y):
-		sprite.texture = TEX_RIGHT if _facing.x > 0.0 else TEX_LEFT
+		sprite.texture = _tex_right if _facing.x > 0.0 else _tex_left
 	else:
-		sprite.texture = TEX_FRONT if _facing.y > 0.0 else TEX_BACK
+		sprite.texture = _tex_front if _facing.y > 0.0 else _tex_back
+
+func _texture_from_b64_webp(path: String) -> Texture2D:
+	var encoded := FileAccess.get_file_as_string(path).strip_edges()
+	if encoded.is_empty():
+		push_error("MYU: empty base64 asset: " + path)
+		return null
+	var bytes := Marshalls.base64_to_raw(encoded)
+	if bytes.is_empty():
+		push_error("MYU: invalid base64 asset: " + path)
+		return null
+	var image := Image.new()
+	var error := image.load_webp_from_buffer(bytes)
+	if error != OK:
+		push_error("MYU: WebP decode failed for " + path + " error=" + str(error))
+		return null
+	return ImageTexture.create_from_image(image)
