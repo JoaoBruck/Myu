@@ -1,21 +1,27 @@
 # MYU
 
-## Outdoor Engine Lab v6
-https://joaobruck.github.io/Myu/phaser/?v=6
+## Build estável
+https://joaobruck.github.io/Myu/
 
-Alternativa:
-https://joaobruck.github.io/Myu/streetlab/?v=6
+## Outdoor Engine Lab v3
+https://joaobruck.github.io/Myu/phaser/
 
-### v6
-- JavaScript + Phaser 4.2.1;
-- Arcade Physics para movimento top-down previsível em px/s;
-- velocidade reduzida para 32 px/s;
-- protagonista em escala 0.42;
-- cadeia contínua de colisores na fachada;
-- world bounds físicos + clamp de segurança;
-- foregrounds recortados para não esconder a protagonista com retângulos opacos;
-- chuva reforçada: mais gotas, maior alpha, maior comprimento e camada próxima/distante;
-- sombra, reflexo e reação à luz preservados.
+Rota alternativa:
+https://joaobruck.github.io/Myu/streetlab/
+
+A cafeteria continua fora do escopo desta fase.
+
+### v3
+- velocidade reduzida para 60 px/s;
+- protagonista em escala maior (~114 px visuais);
+- prédio principal com hitbox poligonal física;
+- circulação limitada ao contorno real da calçada;
+- câmera travada dentro do mapa;
+- fail-safe contra saída da área válida;
+- hitboxes individuais para banco, placa, vasos, postes, jardineira e sinalização;
+- oclusão por recorte do próprio cenário;
+- sombra curta, reflexo no piso, chuva e ondulações;
+- iluminação fria 17:40 + luzes quentes locais.
 
 Debug:
-https://joaobruck.github.io/Myu/phaser/?debug=1&v=6
+https://joaobruck.github.io/Myu/phaser/?debug=1
