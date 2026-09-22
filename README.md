@@ -3,7 +3,7 @@
 ## Build estável
 https://joaobruck.github.io/Myu/
 
-## Outdoor Engine Lab v3
+## Outdoor Engine Lab v3 — Phaser 4
 https://joaobruck.github.io/Myu/phaser/
 
 Rota alternativa:
@@ -12,13 +12,16 @@ https://joaobruck.github.io/Myu/streetlab/
 A cafeteria continua fora do escopo desta fase.
 
 ### v3
-- velocidade reduzida para 42;
-- colisão determinística nos pés;
-- prédio bloqueado por 5 hitboxes sólidas;
-- personagem impedida de sair da área caminhável;
-- recuperação automática caso uma posição inválida ocorra;
-- protagonista maior;
-- chuva, iluminação, sombra e reflexos mantidos.
+- velocidade máxima: **50 px/s**;
+- prédio com corpos estáticos Matter contínuos;
+- colisão determinística adicional antes do deslocamento;
+- personagem não pode sair do polígono caminhável;
+- fallback `lastSafe` impede desaparecer do mapa;
+- hitbox concentrada nos pés;
+- obstáculos visíveis sólidos;
+- protagonista ligeiramente maior;
+- reação visual curta ao encostar em sólidos;
+- cache-busting `v3-physics`.
 
 Debug:
 https://joaobruck.github.io/Myu/phaser/?debug=1
