@@ -3,7 +3,7 @@
 ## Build estável
 https://joaobruck.github.io/Myu/
 
-## Outdoor Engine Lab v2
+## Outdoor Engine Lab v3
 https://joaobruck.github.io/Myu/phaser/
 
 Rota alternativa:
@@ -11,17 +11,19 @@ https://joaobruck.github.io/Myu/streetlab/
 
 A cafeteria continua fora do escopo desta fase.
 
-### v2
-- prédio com hitboxes físicas próprias em Matter;
-- velocidade reduzida para 92;
-- aceleração e desaceleração suavizadas;
-- protagonista maior e mais coerente com a escala da rua;
-- hitbox concentrada nos pés;
-- todos os principais foreground props com colisão;
-- reflexo sutil da protagonista no piso molhado;
-- pequenos respingos/ondulações ao caminhar;
-- sombra/reflexo reagindo às luzes;
-- depth sorting por Y mantido.
+### v3 — correção estrutural
+- prédio agora usa corpos estáticos Matter reais;
+- banco, placas, vasos, balizadores, poste e jardineira também têm colisão;
+- protagonista usa corpo físico pequeno nos pés;
+- velocidade máxima reduzida para 54 px/s;
+- sprite aumentado para escala 0.40;
+- câmera e corpo presos aos limites do mapa;
+- foregrounds separados para oclusão por profundidade;
+- sombra reage à fonte de luz mais próxima;
+- highlight âmbar reage à proximidade das janelas;
+- reflexo no piso molhado;
+- respingos e folhas reagem aos passos;
+- debug físico em ?debug=1.
 
 Debug:
 https://joaobruck.github.io/Myu/phaser/?debug=1

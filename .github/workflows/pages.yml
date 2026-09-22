@@ -1,4 +1,4 @@
-name: Deploy MYU + Outdoor Engine Lab
+name: Deploy MYU + Outdoor Engine Lab v3
 
 on:
   push:
@@ -37,14 +37,14 @@ jobs:
             cp -a _stable/. _site/
           fi
 
-      - name: Prepare outdoor lab v2
+      - name: Prepare outdoor lab v3
         shell: bash
         run: |
-          unzip -q MYU_outdoor_lab_v2.zip -d _lab
+          unzip -q MYU_outdoor_lab_v3.zip -d _lab
           mkdir -p _site/phaser _site/streetlab
-          if [ -d "_lab/MYU_outdoor_lab_v2" ]; then
-            cp -a _lab/MYU_outdoor_lab_v2/. _site/phaser/
-            cp -a _lab/MYU_outdoor_lab_v2/. _site/streetlab/
+          if [ -d "_lab/MYU_outdoor_lab_v3" ]; then
+            cp -a _lab/MYU_outdoor_lab_v3/. _site/phaser/
+            cp -a _lab/MYU_outdoor_lab_v3/. _site/streetlab/
           else
             cp -a _lab/. _site/phaser/
             cp -a _lab/. _site/streetlab/
@@ -54,8 +54,11 @@ jobs:
           test -f _site/phaser/src/main.js
           test -f _site/phaser/data/world.json
           test -f _site/phaser/test_report.txt
-          grep -q '"walkSpeed": 92' _site/phaser/data/world.json
+          grep -q '"speed": 54' _site/phaser/data/world.json
           grep -q '"buildingHitboxes"' _site/phaser/data/world.json
+          grep -q '"spriteScale": 0.4' _site/phaser/data/world.json
+          grep -q 'matter.world.setBounds' _site/phaser/src/main.js
+          grep -q 'this.matter.add.rectangle' _site/phaser/src/main.js
           test -f _site/streetlab/index.html
 
       - uses: actions/upload-pages-artifact@v3
