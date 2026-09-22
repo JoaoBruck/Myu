@@ -3,24 +3,25 @@
 ## Build estável
 https://joaobruck.github.io/Myu/
 
-## Outdoor Engine Lab — Phaser 4
+## Outdoor Engine Lab v2
 https://joaobruck.github.io/Myu/phaser/
 
 Rota alternativa:
 https://joaobruck.github.io/Myu/streetlab/
 
-A cafeteria foi retirada do escopo desta build.
+A cafeteria continua fora do escopo desta fase.
 
-O laboratório atual foca exclusivamente em:
-- escala correta da protagonista;
-- Phaser 4.2.1 + WebGL;
-- Matter Physics com hitbox nos pés;
-- normal maps e iluminação dinâmica;
-- self-shadow em qualidade alta;
-- depth sorting por Y;
-- foreground overlays para oclusão correta;
-- chuva e reflexos de piso molhado;
-- colisões ajustadas à calçada e aos objetos visíveis.
+### v2
+- prédio com hitboxes físicas próprias em Matter;
+- velocidade reduzida para 92;
+- aceleração e desaceleração suavizadas;
+- protagonista maior e mais coerente com a escala da rua;
+- hitbox concentrada nos pés;
+- todos os principais foreground props com colisão;
+- reflexo sutil da protagonista no piso molhado;
+- pequenos respingos/ondulações ao caminhar;
+- sombra/reflexo reagindo às luzes;
+- depth sorting por Y mantido.
 
 Debug:
 https://joaobruck.github.io/Myu/phaser/?debug=1
