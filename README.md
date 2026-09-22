@@ -3,26 +3,23 @@
 ## Build estável
 https://joaobruck.github.io/Myu/
 
-## Street Lab v3
+## Outdoor Engine Lab v4
 https://joaobruck.github.io/Myu/phaser/
 
-Rota alternativa:
+Alternativa:
 https://joaobruck.github.io/Myu/streetlab/
 
-Debug de física:
+### v4
+- prédio com corpos estáticos Matter reais;
+- velocidade máxima 54 px/s;
+- protagonista aumentada para escala 0.40;
+- hitbox física concentrada nos pés;
+- câmera presa ao mapa;
+- proteção extra contra sair da área jogável;
+- props principais com colisão;
+- foregrounds para oclusão;
+- sombra e aquecimento reativos à luz;
+- reflexo molhado, ondulações, folhas e chuva reagindo ao movimento.
+
+Debug:
 https://joaobruck.github.io/Myu/phaser/?debug=1
-
-### O que mudou no v3
-- prédio com quatro caixas de colisão reais;
-- área caminhável limitada à calçada: a protagonista não pode sumir do mapa;
-- velocidade máxima reduzida para 58 px/s;
-- câmera presa ao mundo;
-- protagonista em escala 0.285 do atlas;
-- hitbox nos pés;
-- colisões para postes, banco, jardineiras, placa, corrimão e placas de direção;
-- oclusão de foreground: objetos voltam a cobrir a personagem quando ela passa atrás;
-- sombra orientada pela luz mais próxima;
-- aquecimento sutil do sprite perto das luzes;
-- reflexo curto no piso molhado e ondulações nos passos.
-
-A cafeteria continua fora do escopo.
