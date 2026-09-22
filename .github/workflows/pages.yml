@@ -1,4 +1,4 @@
-name: Deploy MYU + Phaser Rebuild
+name: Deploy MYU + Outdoor Engine Lab
 
 on:
   push:
@@ -20,6 +20,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
@@ -27,8 +28,8 @@ jobs:
       - name: Prepare stable MYU root
         shell: bash
         run: |
-          rm -rf _site _stable _phaser
-          mkdir -p _site _stable _phaser
+          rm -rf _site _stable _lab
+          mkdir -p _site _stable _lab
           unzip -q MYU_17_40_prototype_v15.zip -d _stable
           if [ -d "_stable/MYU_17_40_prototype_v15" ]; then
             cp -a _stable/MYU_17_40_prototype_v15/. _site/
@@ -36,25 +37,25 @@ jobs:
             cp -a _stable/. _site/
           fi
 
-      - name: Prepare Phaser rebuild
+      - name: Prepare outdoor lab
         shell: bash
         run: |
-          unzip -q MYU_17_40_phaser_v1.zip -d _phaser
-          mkdir -p _site/phaser _site/v16
-          if [ -d "_phaser/MYU_17_40_phaser_v1" ]; then
-            cp -a _phaser/MYU_17_40_phaser_v1/. _site/phaser/
-            cp -a _phaser/MYU_17_40_phaser_v1/. _site/v16/
+          unzip -q MYU_outdoor_lab_v1.zip -d _lab
+          mkdir -p _site/phaser _site/streetlab
+          if [ -d "_lab/MYU_outdoor_lab_v1" ]; then
+            cp -a _lab/MYU_outdoor_lab_v1/. _site/phaser/
+            cp -a _lab/MYU_outdoor_lab_v1/. _site/streetlab/
           else
-            cp -a _phaser/. _site/phaser/
-            cp -a _phaser/. _site/v16/
+            cp -a _lab/. _site/phaser/
+            cp -a _lab/. _site/streetlab/
           fi
 
-          test -f _site/index.html
           test -f _site/phaser/index.html
           test -f _site/phaser/src/main.js
-          test -f _site/phaser/assets/backgrounds/exterior.webp
-          test -f _site/phaser/assets/foreground/int_table_center.png
-          test -f _site/v16/index.html
+          test -f _site/phaser/assets/sprites/witch_walk_normal.png
+          test -f _site/phaser/assets/backgrounds/exterior_normal.png
+          test -f _site/phaser/data/world.json
+          test -f _site/streetlab/index.html
 
       - uses: actions/upload-pages-artifact@v3
         with:
