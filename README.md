@@ -1,25 +1,21 @@
 # MYU
 
-## Build estável
-https://joaobruck.github.io/Myu/
-
-## Outdoor Engine Lab v5
-https://joaobruck.github.io/Myu/phaser/?v=5
+## Outdoor Engine Lab v6
+https://joaobruck.github.io/Myu/phaser/?v=6
 
 Alternativa:
-https://joaobruck.github.io/Myu/streetlab/?v=5
+https://joaobruck.github.io/Myu/streetlab/?v=6
 
-### v5
-- prédio com corpos estáticos Matter reais;
-- velocidade máxima 54 px/s;
-- protagonista em escala 0.40;
-- hitbox física nos pés;
-- limites físicos + proteção contra sair da área jogável;
-- props principais com colisão;
-- foregrounds para oclusão;
-- sombra e highlight reativos às luzes;
-- reflexo, ondulações, folhas e chuva;
-- limpeza automática de caches antigos / service worker antigo.
+### v6
+- JavaScript + Phaser 4.2.1;
+- Arcade Physics para movimento top-down previsível em px/s;
+- velocidade reduzida para 32 px/s;
+- protagonista em escala 0.42;
+- cadeia contínua de colisores na fachada;
+- world bounds físicos + clamp de segurança;
+- foregrounds recortados para não esconder a protagonista com retângulos opacos;
+- chuva reforçada: mais gotas, maior alpha, maior comprimento e camada próxima/distante;
+- sombra, reflexo e reação à luz preservados.
 
 Debug:
-https://joaobruck.github.io/Myu/phaser/?debug=1&v=5
+https://joaobruck.github.io/Myu/phaser/?debug=1&v=6
