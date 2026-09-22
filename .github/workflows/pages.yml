@@ -1,4 +1,4 @@
-name: Deploy MYU + Outdoor Lab v4
+name: Deploy MYU + Outdoor Lab v5
 
 on:
   push:
@@ -37,13 +37,26 @@ jobs:
             cp -a _stable/. _site/
           fi
 
-      - name: Prepare outdoor lab v4
+          cat > _site/sw.js <<'SW'
+          self.addEventListener('install', () => self.skipWaiting());
+          self.addEventListener('activate', event => {
+            event.waitUntil((async () => {
+              const keys = await caches.keys();
+              await Promise.all(keys.filter(k => k.startsWith('myu-')).map(k => caches.delete(k)));
+              await self.registration.unregister();
+              await self.clients.claim();
+            })());
+          });
+          self.addEventListener('fetch', () => {});
+          SW
+
+      - name: Prepare outdoor lab v5
         shell: bash
         run: |
-          unzip -q MYU_outdoor_lab_v4.zip -d _lab
+          unzip -q MYU_outdoor_lab_v5.zip -d _lab
           mkdir -p _site/phaser _site/streetlab
-          cp -a _lab/MYU_outdoor_lab_v4/. _site/phaser/
-          cp -a _lab/MYU_outdoor_lab_v4/. _site/streetlab/
+          cp -a _lab/MYU_outdoor_lab_v5/. _site/phaser/
+          cp -a _lab/MYU_outdoor_lab_v5/. _site/streetlab/
 
           test -f _site/phaser/index.html
           test -f _site/phaser/src/main.js
@@ -58,6 +71,7 @@ jobs:
           grep -q 'this.matter.add.rectangle' _site/phaser/src/main.js
           grep -q 'matter.world.setBounds' _site/phaser/src/main.js
           grep -q 'window.__MYU_SCENE__' _site/phaser/src/main.js
+          grep -q 'getRegistrations' _site/phaser/index.html
 
       - uses: actions/upload-pages-artifact@v3
         with:
