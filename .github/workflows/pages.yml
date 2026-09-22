@@ -1,4 +1,4 @@
-name: Deploy MYU v15 to Pages
+name: Deploy MYU + Phaser Rebuild
 
 on:
   push:
@@ -23,24 +23,43 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
-      - name: Prepare MYU v15
+
+      - name: Prepare stable MYU root
         shell: bash
         run: |
-          rm -rf _site _extract _extract_v15
-          mkdir -p _site _extract _extract_v15
-          unzip -q MYU_17_40_prototype_v15.zip -d _extract
-          cp -a _extract/MYU_17_40_prototype_v15/. _site/
-          mkdir -p _site/v15
-          unzip -q MYU_17_40_prototype_v15.zip -d _extract_v15
-          cp -a _extract_v15/MYU_17_40_prototype_v15/. _site/v15/
+          rm -rf _site _stable _phaser
+          mkdir -p _site _stable _phaser
+          unzip -q MYU_17_40_prototype_v15.zip -d _stable
+          if [ -d "_stable/MYU_17_40_prototype_v15" ]; then
+            cp -a _stable/MYU_17_40_prototype_v15/. _site/
+          else
+            cp -a _stable/. _site/
+          fi
+
+      - name: Prepare Phaser rebuild
+        shell: bash
+        run: |
+          unzip -q MYU_17_40_phaser_v1.zip -d _phaser
+          mkdir -p _site/phaser _site/v16
+          if [ -d "_phaser/MYU_17_40_phaser_v1" ]; then
+            cp -a _phaser/MYU_17_40_phaser_v1/. _site/phaser/
+            cp -a _phaser/MYU_17_40_phaser_v1/. _site/v16/
+          else
+            cp -a _phaser/. _site/phaser/
+            cp -a _phaser/. _site/v16/
+          fi
+
           test -f _site/index.html
-          test -f _site/game.js
-          test -f _site/assets/sprites/barista_idle.png
-          test -f _site/data/audio.json
-          test -f _site/v15/index.html
+          test -f _site/phaser/index.html
+          test -f _site/phaser/src/main.js
+          test -f _site/phaser/assets/backgrounds/exterior.webp
+          test -f _site/phaser/assets/foreground/int_table_center.png
+          test -f _site/v16/index.html
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

@@ -1,16 +1,23 @@
 # MYU
 
-Protótipo jogável **MYU — 17:40 v15**.
+O repositório mantém duas bases:
 
-- primeiro NPC funcional dentro do café;
-- colisão física do NPC;
-- interação contextual com botão A;
-- diálogo inicial e repetido;
-- profundidade entre player e NPC;
-- estrutura de áudio preparada.
-
-## Jogar
+## Build estável atual
 https://joaobruck.github.io/Myu/
 
-## v15
-https://joaobruck.github.io/Myu/v15/
+## Phaser Rebuild v1
+https://joaobruck.github.io/Myu/phaser/
+
+A reconstrução em JavaScript + Phaser 3 é deliberadamente enxuta neste primeiro marco:
+- rua e café;
+- personagem jogável em escala maior;
+- Arcade Physics para objetos;
+- regiões caminháveis explícitas;
+- câmera com dead zone;
+- joystick mobile e botão A;
+- transição rua ↔ café;
+- depth sorting pelo eixo Y;
+- foreground overlays para postes, placas, mesas, balcão e estante;
+- modo de debug com `?debug=1`.
+
+O NPC e o áudio da build antiga não foram migrados ainda. Primeiro a base de movimento, colisão e profundidade será validada.
