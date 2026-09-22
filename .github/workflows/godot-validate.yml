@@ -34,10 +34,20 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          /tmp/godot/Godot_v4.7.2-stable_linux.x86_64             --headless             --path godot             --editor             --quit
+          LOG=/tmp/godot-import.log
+          /tmp/godot/Godot_v4.7.2-stable_linux.x86_64             --headless             --path godot             --editor             --quit 2>&1 | tee "$LOG"
+          if grep -E "SCRIPT ERROR:|Parse Error:|Failed to load script|Invalid call|Invalid access" "$LOG"; then
+            echo "Godot reported a script/import error."
+            exit 1
+          fi
 
       - name: Run main scene smoke test
         shell: bash
         run: |
           set -euo pipefail
-          /tmp/godot/Godot_v4.7.2-stable_linux.x86_64             --headless             --path godot             --quit-after 5
+          LOG=/tmp/godot-runtime.log
+          /tmp/godot/Godot_v4.7.2-stable_linux.x86_64             --headless             --path godot             --quit-after 5 2>&1 | tee "$LOG"
+          if grep -E "SCRIPT ERROR:|Parse Error:|Failed to load script|Invalid call|Invalid access" "$LOG"; then
+            echo "Godot reported a runtime error."
+            exit 1
+          fi
