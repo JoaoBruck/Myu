@@ -6,22 +6,28 @@ const DECELERATION := 720.0
 
 var _facing := Vector2.DOWN
 var _step_clock := 0.0
+var _touch_input := Vector2.ZERO
 
 func _ready() -> void:
 	queue_redraw()
 
-func _physics_process(delta: float) -> void:
-	var input_vector := Vector2.ZERO
-	if Input.is_key_pressed(KEY_A) or Input.is_key_pressed(KEY_LEFT):
-		input_vector.x -= 1.0
-	if Input.is_key_pressed(KEY_D) or Input.is_key_pressed(KEY_RIGHT):
-		input_vector.x += 1.0
-	if Input.is_key_pressed(KEY_W) or Input.is_key_pressed(KEY_UP):
-		input_vector.y -= 1.0
-	if Input.is_key_pressed(KEY_S) or Input.is_key_pressed(KEY_DOWN):
-		input_vector.y += 1.0
+func set_touch_input(value: Vector2) -> void:
+	_touch_input = value
 
-	input_vector = input_vector.normalized()
+func _physics_process(delta: float) -> void:
+	var keyboard_input := Vector2.ZERO
+	if Input.is_key_pressed(KEY_A) or Input.is_key_pressed(KEY_LEFT):
+		keyboard_input.x -= 1.0
+	if Input.is_key_pressed(KEY_D) or Input.is_key_pressed(KEY_RIGHT):
+		keyboard_input.x += 1.0
+	if Input.is_key_pressed(KEY_W) or Input.is_key_pressed(KEY_UP):
+		keyboard_input.y -= 1.0
+	if Input.is_key_pressed(KEY_S) or Input.is_key_pressed(KEY_DOWN):
+		keyboard_input.y += 1.0
+
+	var input_vector := keyboard_input + _touch_input
+	if input_vector.length() > 1.0:
+		input_vector = input_vector.normalized()
 
 	if input_vector != Vector2.ZERO:
 		_facing = input_vector
@@ -35,8 +41,6 @@ func _physics_process(delta: float) -> void:
 	queue_redraw()
 
 func _draw() -> void:
-	# Temporary authored-in-engine silhouette using the approved 56 px scale.
-	# It exists only until the final 4-direction sprite sheet is separated from the art source.
 	var bob := 0.0
 	if velocity.length() > 1.0:
 		bob = round(sin(_step_clock) * 1.0)
