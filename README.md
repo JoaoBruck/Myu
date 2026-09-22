@@ -1,18 +1,19 @@
 # MYU
 
-Protótipo jogável **MYU — 17:40 v10**.
+Protótipo jogável **MYU — 17:40 v11**.
 
-Mudanças:
-- novo interior do café integrado ao jogo;
-- exterior preservado;
-- novas colisões para o interior;
-- transição rua ↔ café;
-- câmera e controles mobile mantidos;
-- animação da personagem refinada;
-- sistema antigo de recortes/oclusão removido.
+Principais ajustes desta versão:
+- sprite da protagonista mais pixelado e coerente com o cenário;
+- flor preservada na bolsa;
+- atlas próprio de sombra;
+- colisões reforçadas no exterior e no interior;
+- câmera um pouco mais afastada;
+- movimento suavizado;
+- transição e cache atualizados para v11.
 
 ## Jogar
+
 https://joaobruck.github.io/Myu/
 
 Versão direta:
-https://joaobruck.github.io/Myu/v10/
+https://joaobruck.github.io/Myu/v11/

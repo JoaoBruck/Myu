@@ -1,4 +1,4 @@
-name: Deploy MYU v10 to Pages
+name: Deploy MYU v11 to Pages
 
 on:
   push:
@@ -23,34 +23,42 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
-      - name: Prepare MYU v10
+
+      - name: Prepare MYU v11
         shell: bash
         run: |
-          rm -rf _site _extract _extract_v10
-          mkdir -p _site _extract _extract_v10
-          unzip -q MYU_17_40_prototype_v10.zip -d _extract
-          if [ -d "_extract/MYU_17_40_prototype_v10" ]; then
-            cp -a _extract/MYU_17_40_prototype_v10/. _site/
+          rm -rf _site _extract _extract_v11
+          mkdir -p _site _extract _extract_v11
+
+          unzip -q MYU_17_40_prototype_v11.zip -d _extract
+          if [ -d "_extract/MYU_17_40_prototype_v11" ]; then
+            cp -a _extract/MYU_17_40_prototype_v11/. _site/
           else
             cp -a _extract/. _site/
           fi
-          mkdir -p _site/v10
-          unzip -q MYU_17_40_prototype_v10.zip -d _extract_v10
-          if [ -d "_extract_v10/MYU_17_40_prototype_v10" ]; then
-            cp -a _extract_v10/MYU_17_40_prototype_v10/. _site/v10/
+
+          mkdir -p _site/v11
+          unzip -q MYU_17_40_prototype_v11.zip -d _extract_v11
+          if [ -d "_extract_v11/MYU_17_40_prototype_v11" ]; then
+            cp -a _extract_v11/MYU_17_40_prototype_v11/. _site/v11/
           else
-            cp -a _extract_v10/. _site/v10/
+            cp -a _extract_v11/. _site/v11/
           fi
+
           test -f _site/index.html
           test -f _site/game.js
-          test -f _site/assets/backgrounds/interior.webp
-          test -f _site/v10/index.html
+          test -f _site/assets/sprites/witch_walk_atlas.webp
+          test -f _site/assets/sprites/shadow_atlas.png
+          test -f _site/v11/index.html
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: _site
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
