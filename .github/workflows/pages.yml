@@ -1,4 +1,4 @@
-name: Deploy MYU + Outdoor Engine Lab v3
+name: Deploy MYU + Street Lab v3
 
 on:
   push:
@@ -20,46 +20,32 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
 
-      - name: Prepare stable MYU root
+      - name: Prepare stable root
         shell: bash
         run: |
           rm -rf _site _stable _lab
           mkdir -p _site _stable _lab
           unzip -q MYU_17_40_prototype_v15.zip -d _stable
-          if [ -d "_stable/MYU_17_40_prototype_v15" ]; then
-            cp -a _stable/MYU_17_40_prototype_v15/. _site/
-          else
-            cp -a _stable/. _site/
-          fi
+          cp -a _stable/MYU_17_40_prototype_v15/. _site/
 
-      - name: Prepare outdoor lab v3
+      - name: Prepare street lab v3
         shell: bash
         run: |
           unzip -q MYU_outdoor_lab_v3.zip -d _lab
           mkdir -p _site/phaser _site/streetlab
-          if [ -d "_lab/MYU_outdoor_lab_v3" ]; then
-            cp -a _lab/MYU_outdoor_lab_v3/. _site/phaser/
-            cp -a _lab/MYU_outdoor_lab_v3/. _site/streetlab/
-          else
-            cp -a _lab/. _site/phaser/
-            cp -a _lab/. _site/streetlab/
-          fi
+          cp -a _lab/myu_streetlab_v3/. _site/phaser/
+          cp -a _lab/myu_streetlab_v3/. _site/streetlab/
 
-          test -f _site/phaser/index.html
-          test -f _site/phaser/src/main.js
-          test -f _site/phaser/data/world.json
+          test -f _site/phaser/app.js
           test -f _site/phaser/test_report.txt
-          grep -q '"speed": 54' _site/phaser/data/world.json
-          grep -q '"buildingHitboxes"' _site/phaser/data/world.json
-          grep -q '"spriteScale": 0.4' _site/phaser/data/world.json
-          grep -q 'matter.world.setBounds' _site/phaser/src/main.js
-          grep -q 'this.matter.add.rectangle' _site/phaser/src/main.js
-          test -f _site/streetlab/index.html
+          grep -q 'maxSpeed:58' _site/phaser/app.js
+          grep -q 'BUILDING_HITBOXES' _site/phaser/app.js
+          grep -q 'WALK_POLY' _site/phaser/app.js
+          grep -q 'outside x=600 y=900 blocked' _site/phaser/test_report.txt
 
       - uses: actions/upload-pages-artifact@v3
         with:
