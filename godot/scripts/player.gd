@@ -41,38 +41,32 @@ func _draw() -> void:
 	if velocity.length() > 1.0:
 		bob = round(sin(_step_clock) * 1.0)
 
-	# shadow
-	draw_ellipse(Vector2(0, 27), Vector2(11, 4), Color(0.025, 0.026, 0.045, 0.55))
+	_draw_shadow_ellipse(Vector2(0, 27), Vector2(11, 4), Color(0.025, 0.026, 0.045, 0.55))
 
-	# boots / skirt
 	draw_rect(Rect2(-9, 13 + bob, 7, 13), Color("#211f2d"))
 	draw_rect(Rect2(2, 13 + bob, 7, 13), Color("#211f2d"))
 	draw_rect(Rect2(-12, 5 + bob, 24, 15), Color("#292638"))
 
-	# coat
 	draw_rect(Rect2(-13, -12 + bob, 26, 22), Color("#4a3140"))
 	draw_rect(Rect2(-16, -8 + bob, 4, 17), Color("#3b2a38"))
 	draw_rect(Rect2(12, -8 + bob, 4, 17), Color("#3b2a38"))
 
-	# scarf
 	draw_rect(Rect2(-12, -13 + bob, 24, 7), Color("#48506f"))
 	draw_rect(Rect2(7, -8 + bob, 6, 13), Color("#414864"))
 
-	# head and hair mass
 	draw_circle(Vector2(0, -25 + bob), 11.0, Color("#d7a18e"))
 	draw_circle(Vector2(0, -30 + bob), 15.0, Color("#3a252e"))
 	draw_circle(Vector2(9, -42 + bob), 7.0, Color("#3a252e"))
 	draw_rect(Rect2(-14, -30 + bob, 9, 17), Color("#3a252e"))
 	draw_rect(Rect2(4, -30 + bob, 10, 15), Color("#3a252e"))
 
-	# bag + pale flower landmark
 	draw_rect(Rect2(12, 4 + bob, 10, 13), Color("#3b2634"))
 	draw_line(Vector2(8, -5 + bob), Vector2(17, 5 + bob), Color("#6a4a58"), 2.0)
 	draw_circle(Vector2(20, 6 + bob), 3.0, Color("#f0d9c7"))
 	draw_line(Vector2(17, 6 + bob), Vector2(23, 6 + bob), Color("#f0d9c7"), 1.0)
 	draw_line(Vector2(20, 3 + bob), Vector2(20, 9 + bob), Color("#f0d9c7"), 1.0)
 
-func draw_ellipse(center: Vector2, radius: Vector2, color: Color) -> void:
+func _draw_shadow_ellipse(center: Vector2, radius: Vector2, color: Color) -> void:
 	var points := PackedVector2Array()
 	for i in 24:
 		var angle := TAU * float(i) / 24.0
