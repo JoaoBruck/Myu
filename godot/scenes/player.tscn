@@ -3,20 +3,19 @@
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_player"]
 
 [sub_resource type="RectangleShape2D" id="FeetShape"]
-size = Vector2(14, 7)
+size = Vector2(12, 6)
 
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_player")
 collision_layer = 1
 collision_mask = 1
 motion_mode = 1
+z_index = 20
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -28)
+texture_filter = 1
 
 [node name="FeetCollision" type="CollisionShape2D" parent="."]
-position = Vector2(0, 25)
+position = Vector2(0, -3)
 shape = SubResource("FeetShape")
-
-[node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(0, 0)
-enabled = true
-position_smoothing_enabled = true
-position_smoothing_speed = 7.0
