@@ -1,4 +1,4 @@
-name: Deploy MYU v11.2 to Pages
+name: Deploy MYU v15 to Pages
 
 on:
   push:
@@ -21,42 +21,26 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-
-      - name: Build v11.2 from stable v10 assets
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - name: Prepare MYU v15
         shell: bash
         run: |
-          rm -rf _site _extract _version
-          mkdir -p _site _extract _version
-          unzip -q MYU_17_40_prototype_v10.zip -d _extract
-          if [ -d "_extract/MYU_17_40_prototype_v10" ]; then
-            cp -a _extract/MYU_17_40_prototype_v10/. _site/
-          else
-            cp -a _extract/. _site/
-          fi
-
-          cp -a patches/v11/. _site/
-
-          cp -a _site/. _version/
-          mkdir -p _site/v11
-          cp -a _version/. _site/v11/
-
+          rm -rf _site _extract _extract_v15
+          mkdir -p _site _extract _extract_v15
+          unzip -q MYU_17_40_prototype_v15.zip -d _extract
+          cp -a _extract/MYU_17_40_prototype_v15/. _site/
+          mkdir -p _site/v15
+          unzip -q MYU_17_40_prototype_v15.zip -d _extract_v15
+          cp -a _extract_v15/MYU_17_40_prototype_v15/. _site/v15/
           test -f _site/index.html
           test -f _site/game.js
-          test -f _site/data/scene.json
-          test -f _site/assets/sprites/witch_walk_atlas.webp
-          test -f _site/assets/backgrounds/exterior.webp
-          test -f _site/v11/index.html
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+          test -f _site/assets/sprites/barista_idle.png
+          test -f _site/data/audio.json
+          test -f _site/v15/index.html
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
-
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
