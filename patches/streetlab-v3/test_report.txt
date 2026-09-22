@@ -1,0 +1,5 @@
+spawn_valid: PASS
+building_blocks: PASS
+road_outside_blocks: PASS
+sidewalk_walkable: PASS
+30k_steps_never_invalid: PASS

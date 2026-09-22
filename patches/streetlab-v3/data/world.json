@@ -1,0 +1,41 @@
+{
+  "spawn": {"x":560,"y":700},
+  "walkBoundary": [[0,472],[155,455],[305,493],[520,528],[770,555],[990,540],[1115,485],[1300,510],[1448,575],[1448,780],[1310,790],[1130,815],[900,842],[650,830],[430,800],[220,755],[65,700],[0,675]],
+  "obstacles": [
+    {"id":"bench","type":"rect","x":92,"y":405,"w":180,"h":55},
+    {"id":"signboard","type":"rect","x":660,"y":535,"w":65,"h":42},
+    {"id":"doorPlanter","type":"circle","x":865,"y":536,"r":35},
+    {"id":"lamp","type":"circle","x":1120,"y":560,"r":22},
+    {"id":"rightPlanter","type":"rect","x":1230,"y":665,"w":105,"h":70},
+    {"id":"bollard1","type":"circle","x":40,"y":570,"r":19},
+    {"id":"bollard2","type":"circle","x":178,"y":630,"r":19},
+    {"id":"bollard3","type":"circle","x":306,"y":680,"r":19},
+    {"id":"bollard4","type":"circle","x":451,"y":735,"r":20},
+    {"id":"bollard5","type":"circle","x":804,"y":770,"r":20},
+    {"id":"signs","type":"rect","x":1322,"y":728,"w":205,"h":82}
+  ],
+  "lights": [
+    {"id":"window1","x":465,"y":370,"radius":250,"color":"0xffb36f","intensity":1.25,"z":70},
+    {"id":"window2","x":585,"y":360,"radius":250,"color":"0xffbd78","intensity":1.15,"z":70},
+    {"id":"door","x":805,"y":420,"radius":280,"color":"0xffaa60","intensity":1.25,"z":80},
+    {"id":"lamp","x":1120,"y":190,"radius":360,"color":"0xffc77a","intensity":1.35,"z":110},
+    {"id":"sky","x":1420,"y":130,"radius":780,"color":"0x7180b5","intensity":0.35,"z":250}
+  ],
+  "buildingHitboxes": [
+    {"id":"building_west","type":"rect","x":150,"y":220,"w":300,"h":440},
+    {"id":"building_front_left","type":"rect","x":420,"y":245,"w":240,"h":490},
+    {"id":"building_front_mid","type":"rect","x":635,"y":260,"w":190,"h":520},
+    {"id":"building_front_door","type":"rect","x":780,"y":255,"w":100,"h":510},
+    {"id":"building_corner","type":"rect","x":930,"y":250,"w":200,"h":500}
+  ],
+  "player": {
+    "walkSpeed":42,
+    "acceleration":7.2,
+    "deceleration":10.5,
+    "visualScaleNear":0.86,
+    "visualScaleFar":0.78,
+    "feetWidth":30,
+    "feetHeight":14,
+    "stepInterval":0.14
+  }
+}
