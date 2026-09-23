@@ -110,6 +110,24 @@ jobs:
           test -f _site/godot/index.html
           test -f _site/godot/index.wasm
           test -f _site/godot/index.pck
+
+          # Critical: boot the EXPORTED PCK itself with the engine.
+          # This catches resources that existed in the checkout/editor but were
+          # accidentally omitted from the Web package.
+          PACK_LOG=/tmp/godot-exported-pack-runtime.log
+          /tmp/godot/Godot_v4.7.2-stable_linux.x86_64 --headless --main-pack "$GITHUB_WORKSPACE/_site/godot/index.pck" --quit-after 5 2>&1 | tee "$PACK_LOG"
+          grep -q "MYU_HD_FILE_READY" "$PACK_LOG"
+          grep -q "MYU_HD_SOURCE_SIZE=(1672, 941)" "$PACK_LOG"
+          grep -q "MYU_HD_BACKGROUND_READY" "$PACK_LOG"
+          grep -q "MYU_ANIMATED_PLAYER_READY" "$PACK_LOG"
+          grep -q "MYU_PLAYER_SHADOW_READY" "$PACK_LOG"
+          grep -q "MYU_REFLECTIONS_READY" "$PACK_LOG"
+          grep -q "MYU_NO_FAKE_GLOWS_READY" "$PACK_LOG"
+          grep -q "MYU_RAIN_READY" "$PACK_LOG"
+          if grep -E "SCRIPT ERROR:|Parse Error:|Failed to load|Invalid call|Invalid access|resource missing|unexpected HD source size" "$PACK_LOG"; then
+            exit 1
+          fi
+
           touch _site/.nojekyll
 
       - uses: actions/upload-pages-artifact@v3
