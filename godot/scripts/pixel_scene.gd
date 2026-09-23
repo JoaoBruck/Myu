@@ -1,13 +1,6 @@
 extends Node2D
 
 const WORLD_SIZE := Vector2(1024, 576)
-const HD_CHUNKS := [
-	"res://assets_b64/lume_hd_0.b64",
-	"res://assets_b64/lume_hd_1.b64",
-	"res://assets_b64/lume_hd_2.b64",
-	"res://assets_b64/lume_hd_3.b64",
-	"res://assets_b64/lume_hd_4.b64",
-]
 
 @onready var background: Sprite2D = $Background
 @onready var collision_root: Node2D = $CollisionGeometry
@@ -44,38 +37,18 @@ func _ready() -> void:
 
 func _load_hd_background() -> Texture2D:
 	var hd_path := "res://assets/lume_cafe_hd.png"
-	if FileAccess.file_exists(hd_path):
-		var image := Image.new()
-		var error := image.load(hd_path)
-		if error == OK:
-			print("MYU_HD_FILE_READY")
-			print("MYU_HD_SOURCE_SIZE=" + str(image.get_size()))
-			return ImageTexture.create_from_image(image)
-		push_error("MYU: HD PNG load failed error=" + str(error))
-
-	print("MYU: HD PNG missing; using temporary embedded fallback")
-	return _texture_from_b64_webp_chunks(HD_CHUNKS)
-
-func _texture_from_b64_webp_chunks(paths: Array) -> Texture2D:
-	var encoded := ""
-	for path in paths:
-		var chunk := FileAccess.get_file_as_string(path).strip_edges()
-		if chunk.is_empty():
-			push_error("MYU: empty HD background chunk: " + str(path))
-			return null
-		encoded += chunk
-
-	var bytes := Marshalls.base64_to_raw(encoded)
-	if bytes.is_empty():
-		push_error("MYU: invalid HD background base64")
-		return null
-
 	var image := Image.new()
-	var error := image.load_webp_from_buffer(bytes)
+	var error := image.load(hd_path)
+
 	if error != OK:
-		push_error("MYU: HD WebP decode failed error=" + str(error))
+		push_error("MYU: HD PNG load failed error=" + str(error))
 		return null
 
+	if image.get_size() != Vector2i(1672, 941):
+		push_error("MYU: unexpected HD source size=" + str(image.get_size()))
+		return null
+
+	print("MYU_HD_FILE_READY")
 	print("MYU_HD_SOURCE_SIZE=" + str(image.get_size()))
 	return ImageTexture.create_from_image(image)
 
@@ -124,9 +97,8 @@ func _add_static_rect(center: Vector2, size: Vector2, body_name: String) -> void
 	collision_root.add_child(body)
 
 func _build_depth_occluders() -> void:
-	# Re-draw selected regions of the original HD scene inside the y-sorted layer.
-	# This keeps the original art while allowing the player to pass naturally
-	# behind trunks, posts, rails and foreground masses.
+	# Re-draw selected regions of the original scene inside the y-sorted layer.
+	# The player therefore passes naturally behind the original painted objects.
 	_add_textured_occluder(
 		"TreeCanopy",
 		[
