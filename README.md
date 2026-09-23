@@ -16,10 +16,14 @@ https://joaobruck.github.io/Myu/streetlab/
 
 ### Godot
 - viewport lógico: **512×288**;
+- cenário do Lume Café em pixel art;
+- protagonista em **32×56 por frame**, no jogo;
+- **idle animado com 4 frames** mesmo quando a personagem está parada;
+- caminhada animada com **6 frames** para baixo, cima, direita e esquerda;
 - movimento em 8 direções;
 - teclado no desktop e analógico por toque no celular;
 - hitbox concentrada nos pés;
-- chuva e reflexos separados;
+- **chuva ativa** sobre a cena;
 - export Web sem threads para maior compatibilidade mobile;
 - build validado pelo Godot 4.7.2 antes do deploy.
 
