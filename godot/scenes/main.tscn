@@ -6,7 +6,7 @@
 [ext_resource type="Script" path="res://scripts/rain.gd" id="4_rain"]
 [ext_resource type="Script" path="res://scripts/reflections.gd" id="5_reflections"]
 [ext_resource type="Script" path="res://scripts/atmosphere.gd" id="6_atmosphere"]
-[ext_resource type="Texture2D" path="res://assets/lume_cafe_hd.png" id="7_background"]
+[ext_resource type="Texture2D" path="res://art/lume_cafe_hd.png" id="7_background"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_scene")
