@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -25,6 +25,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+
+      - name: Bootstrap original HD Lume scene
+        if: ${{ hashFiles('godot/assets/lume_cafe_hd.png') == '' }}
+        env:
+          MYU_HD_ASSET_URL: "https://sdmntprbrazilsouth.oaiusercontent.com/files/00000000-8a38-820e-a143-ed33936ce1f6/raw?se=2026-09-23T02%3A30%3A22Z&sp=r&sv=2026-02-06&sr=b&scid=3775e68b-5556-5d64-b55f-5a991a9e5376&skoid=127c13cb-e695-43ea-b6b2-0a863d41dbf7&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-22T22%3A59%3A22Z&ske=2026-09-23T22%3A59%3A22Z&sks=b&skv=2026-02-06&sig=450QiyBAPy3cAjIr5CVojjfJvzFG8W08dOt412QhIf4%3D"
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p godot/assets
+          curl -L --fail --retry 3 "$MYU_HD_ASSET_URL" -o godot/assets/lume_cafe_hd.png
+          test "$(stat -c%s godot/assets/lume_cafe_hd.png)" -gt 2000000
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add godot/assets/lume_cafe_hd.png
+          git commit -m "Add original HD Lume Cafe scene [skip ci]"
+          git push origin HEAD:main
 
       - name: Prepare stable MYU root
         shell: bash
@@ -70,11 +86,13 @@ jobs:
           unzip -q /tmp/godot_templates.tpz -d /tmp/godot-templates
           cp -a /tmp/godot-templates/templates/. "$HOME/.local/share/godot/export_templates/4.7.2.stable/"
 
-      - name: Validate and build Godot pixel version
+      - name: Validate and build Godot HD pixel version
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p _site/godot
+          test -f godot/assets/lume_cafe_hd.png
+          test "$(stat -c%s godot/assets/lume_cafe_hd.png)" -gt 2000000
 
           IMPORT_LOG=/tmp/godot-import.log
           /tmp/godot/Godot_v4.7.2-stable_linux.x86_64 --headless --path godot --editor --quit 2>&1 | tee "$IMPORT_LOG"
@@ -84,6 +102,8 @@ jobs:
 
           RUNTIME_LOG=/tmp/godot-runtime.log
           /tmp/godot/Godot_v4.7.2-stable_linux.x86_64 --headless --path godot --quit-after 5 2>&1 | tee "$RUNTIME_LOG"
+          grep -q "MYU_HD_FILE_READY" "$RUNTIME_LOG"
+          grep -q "MYU_HD_SOURCE_SIZE=(1672, 941)" "$RUNTIME_LOG"
           grep -q "MYU_PIXEL_BACKGROUND_READY" "$RUNTIME_LOG"
           grep -q "MYU_HD_BACKGROUND_READY" "$RUNTIME_LOG"
           grep -q "MYU_COLLISION_READY" "$RUNTIME_LOG"
@@ -94,7 +114,7 @@ jobs:
           grep -q "MYU_REFLECTIONS_READY" "$RUNTIME_LOG"
           grep -q "MYU_POLISH_READY" "$RUNTIME_LOG"
           grep -q "MYU_RAIN_READY" "$RUNTIME_LOG"
-          if grep -E "SCRIPT ERROR:|Parse Error:|Failed to decode|failed to decode|invalid base64|WebP decode failed|animated sprite sheet failed|failed to decode HD|Invalid call|Invalid access" "$RUNTIME_LOG"; then
+          if grep -E "SCRIPT ERROR:|Parse Error:|Failed to decode|failed to decode|invalid base64|WebP decode failed|animated sprite sheet failed|failed to load HD|Invalid call|Invalid access" "$RUNTIME_LOG"; then
             exit 1
           fi
 
