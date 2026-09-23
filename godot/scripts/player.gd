@@ -1,8 +1,8 @@
 extends CharacterBody2D
 
-const WALK_SPEED := 48.0
-const ACCELERATION := 420.0
-const DECELERATION := 560.0
+const WALK_SPEED := 96.0
+const ACCELERATION := 840.0
+const DECELERATION := 1120.0
 const CELL_W := 32
 const CELL_H := 56
 
@@ -20,6 +20,7 @@ func _ready() -> void:
 	sprite.play(&"idle_down")
 	print("MYU_PIXEL_PLAYER_READY")
 	print("MYU_ANIMATED_PLAYER_READY")
+	print("MYU_PLAYER_SHADOW_READY")
 
 func set_touch_input(value: Vector2) -> void:
 	_touch_input = value
@@ -39,8 +40,8 @@ func _physics_process(delta: float) -> void:
 			sprite.play(&"idle_down")
 
 	move_and_slide()
-	global_position.x = clamp(global_position.x, 18.0, 494.0)
-	global_position.y = clamp(global_position.y, 118.0, 235.0)
+	global_position.x = clamp(global_position.x, 24.0, 1000.0)
+	global_position.y = clamp(global_position.y, 202.0, 554.0)
 
 func _play_walk_animation(input_vector: Vector2) -> void:
 	var next_animation: StringName
@@ -80,12 +81,7 @@ func _add_animation(
 	for column in frame_count:
 		var atlas := AtlasTexture.new()
 		atlas.atlas = sheet
-		atlas.region = Rect2(
-			column * CELL_W,
-			row * CELL_H,
-			CELL_W,
-			CELL_H
-		)
+		atlas.region = Rect2(column * CELL_W, row * CELL_H, CELL_W, CELL_H)
 		frames.add_frame(animation_name, atlas)
 
 func _load_sheet_from_chunks() -> Texture2D:
