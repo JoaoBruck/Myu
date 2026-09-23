@@ -1,9 +1,9 @@
 extends Control
 
-const JOYSTICK_CENTER := Vector2(72, 222)
-const JOYSTICK_RADIUS := 42.0
-const KNOB_LIMIT := 28.0
-const DEAD_ZONE := 0.14
+const JOYSTICK_CENTER := Vector2(130, 450)
+const JOYSTICK_RADIUS := 68.0
+const KNOB_LIMIT := 45.0
+const DEAD_ZONE := 0.13
 
 var _joystick_touch_id := -1
 var _knob_position := JOYSTICK_CENTER
@@ -11,7 +11,7 @@ var _player: CharacterBody2D
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_player = get_node("../../Player") as CharacterBody2D
+	_player = get_node("../../DepthWorld/Player") as CharacterBody2D
 	set_process_unhandled_input(true)
 	queue_redraw()
 
@@ -19,7 +19,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
 		var touch := event as InputEventScreenTouch
 		if touch.pressed:
-			if _joystick_touch_id == -1 and touch.position.distance_to(JOYSTICK_CENTER) <= JOYSTICK_RADIUS * 1.6:
+			if _joystick_touch_id == -1 and touch.position.distance_to(JOYSTICK_CENTER) <= JOYSTICK_RADIUS * 1.55:
 				_joystick_touch_id = touch.index
 				_update_joystick(touch.position)
 				get_viewport().set_input_as_handled()
@@ -37,11 +37,13 @@ func _update_joystick(screen_position: Vector2) -> void:
 	if delta.length() > KNOB_LIMIT:
 		delta = delta.normalized() * KNOB_LIMIT
 	_knob_position = JOYSTICK_CENTER + delta
+
 	var direction := delta / KNOB_LIMIT
 	if direction.length() < DEAD_ZONE:
 		direction = Vector2.ZERO
 	elif direction.length() > 1.0:
 		direction = direction.normalized()
+
 	_player.set_touch_input(direction)
 	queue_redraw()
 
@@ -52,6 +54,7 @@ func _release_joystick() -> void:
 	queue_redraw()
 
 func _draw() -> void:
-	draw_circle(JOYSTICK_CENTER, JOYSTICK_RADIUS, Color(0.04, 0.045, 0.08, 0.50))
-	draw_arc(JOYSTICK_CENTER, JOYSTICK_RADIUS, 0.0, TAU, 40, Color(0.77, 0.73, 0.88, 0.42), 2.0, true)
-	draw_circle(_knob_position, 14.0, Color(0.80, 0.76, 0.91, 0.68))
+	draw_circle(JOYSTICK_CENTER, JOYSTICK_RADIUS, Color(0.025, 0.03, 0.055, 0.34))
+	draw_arc(JOYSTICK_CENTER, JOYSTICK_RADIUS, 0.0, TAU, 48, Color(0.79, 0.76, 0.89, 0.31), 3.0, true)
+	draw_circle(_knob_position, 23.0, Color(0.82, 0.79, 0.92, 0.58))
+	draw_arc(_knob_position, 23.0, 0.0, TAU, 32, Color(0.95, 0.93, 1.0, 0.35), 2.0, true)
