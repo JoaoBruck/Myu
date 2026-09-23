@@ -1,112 +1,68 @@
 extends CharacterBody2D
-
-const WALK_SPEED := 96.0
-const ACCELERATION := 840.0
-const DECELERATION := 1120.0
-const CELL_W := 32
-const CELL_H := 56
-
-var _touch_input := Vector2.ZERO
-
+const WALK_SPEED := 116.0
+const ACCELERATION := 1100.0
+const DECELERATION := 1450.0
+const SHEET := preload("res://art/myu_walk.png")
+const DIRECTIONS: Array[StringName] = [&"down", &"up", &"right", &"left"]
+var touch_input := Vector2.ZERO
+var facing: StringName = &"down"
+var moved_distance := 0.0
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
-
 func _ready() -> void:
-	var sheet := _load_sheet_from_chunks()
-	if sheet == null:
-		push_error("MYU: animated sprite sheet failed to decode")
-		return
-
-	sprite.sprite_frames = _build_frames(sheet)
+	sprite.sprite_frames = _build_frames()
 	sprite.play(&"idle_down")
 	print("MYU_PIXEL_PLAYER_READY")
 	print("MYU_ANIMATED_PLAYER_READY")
 	print("MYU_PLAYER_SHADOW_READY")
-
 func set_touch_input(value: Vector2) -> void:
-	_touch_input = value
-
+	touch_input = value.limit_length()
 func _physics_process(delta: float) -> void:
-	var keyboard := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-	var input_vector := keyboard + _touch_input
-	if input_vector.length() > 1.0:
-		input_vector = input_vector.normalized()
-
-	if input_vector != Vector2.ZERO:
-		velocity = velocity.move_toward(input_vector * WALK_SPEED, ACCELERATION * delta)
-		_play_walk_animation(input_vector)
-	else:
-		velocity = velocity.move_toward(Vector2.ZERO, DECELERATION * delta)
-		if sprite.animation != &"idle_down":
-			sprite.play(&"idle_down")
-
+	var keyboard := Input.get_vector("move_left","move_right","move_up","move_down")
+	step_motion(keyboard if keyboard.length_squared() >= touch_input.length_squared() else touch_input,delta)
+func step_motion(input_vector: Vector2, delta: float) -> void:
+	var direction := input_vector.limit_length()
+	var moving := direction.length_squared() > 0.001
+	if moving:
+		_update_facing(direction)
+	velocity = velocity.move_toward(direction * WALK_SPEED,(ACCELERATION if moving else DECELERATION) * delta)
+	var previous := global_position
 	move_and_slide()
-	global_position.x = clamp(global_position.x, 24.0, 1000.0)
-	global_position.y = clamp(global_position.y, 202.0, 554.0)
-
-func _play_walk_animation(input_vector: Vector2) -> void:
-	var next_animation: StringName
-	if abs(input_vector.x) > abs(input_vector.y):
-		next_animation = &"walk_right" if input_vector.x > 0.0 else &"walk_left"
+	moved_distance = global_position.distance_to(previous)
+	var animation := StringName("walk_" + String(facing)) if moved_distance > 0.08 else StringName("idle_" + String(facing))
+	if sprite.animation != animation:
+		sprite.play(animation)
+	sprite.speed_scale = clampf(moved_distance/maxf(delta,0.001)/WALK_SPEED,0.55,1.25) if animation.begins_with("walk_") else 1.0
+func _update_facing(direction: Vector2) -> void:
+	if absf(direction.x) > absf(direction.y) + 0.12:
+		facing = &"right" if direction.x > 0 else &"left"
+	elif absf(direction.y) > absf(direction.x) + 0.12:
+		facing = &"down" if direction.y > 0 else &"up"
+	elif facing in [&"left",&"right"]:
+		facing = &"right" if direction.x > 0 else &"left"
 	else:
-		next_animation = &"walk_down" if input_vector.y > 0.0 else &"walk_up"
-
-	if sprite.animation != next_animation:
-		sprite.play(next_animation)
-
-func _build_frames(sheet: Texture2D) -> SpriteFrames:
+		facing = &"down" if direction.y > 0 else &"up"
+func stop_motion() -> void:
+	touch_input = Vector2.ZERO
+	velocity = Vector2.ZERO
+	if is_instance_valid(sprite):
+		sprite.play(StringName("idle_" + String(facing)))
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		stop_motion()
+func _build_frames() -> SpriteFrames:
 	var frames := SpriteFrames.new()
-	if frames.has_animation(&"default"):
-		frames.remove_animation(&"default")
-
-	_add_animation(frames, sheet, &"idle_down", 0, 4, 4.0)
-	_add_animation(frames, sheet, &"walk_down", 1, 6, 8.0)
-	_add_animation(frames, sheet, &"walk_up", 2, 6, 8.0)
-	_add_animation(frames, sheet, &"walk_right", 3, 6, 8.0)
-	_add_animation(frames, sheet, &"walk_left", 4, 6, 8.0)
-
+	frames.remove_animation(&"default")
+	for row in 4:
+		var suffix := String(DIRECTIONS[row])
+		_add_animation(frames,StringName("walk_"+suffix),row+1,6,9.0)
+		# Only front idle is supplied; other directions hold a supplied pose.
+		_add_animation(frames,StringName("idle_"+suffix),0 if row == 0 else row+1,4 if row == 0 else 1,3.0)
 	return frames
-
-func _add_animation(
-	frames: SpriteFrames,
-	sheet: Texture2D,
-	animation_name: StringName,
-	row: int,
-	frame_count: int,
-	fps: float
-) -> void:
-	frames.add_animation(animation_name)
-	frames.set_animation_speed(animation_name, fps)
-	frames.set_animation_loop(animation_name, true)
-
-	for column in frame_count:
-		var atlas := AtlasTexture.new()
-		atlas.atlas = sheet
-		atlas.region = Rect2(column * CELL_W, row * CELL_H, CELL_W, CELL_H)
-		frames.add_frame(animation_name, atlas)
-
-func _load_sheet_from_chunks() -> Texture2D:
-	var encoded := ""
-	for path in [
-		"res://assets_b64/myu_anim_0.b64",
-		"res://assets_b64/myu_anim_1.b64",
-		"res://assets_b64/myu_anim_2.b64",
-		"res://assets_b64/myu_anim_3.b64",
-	]:
-		var chunk := FileAccess.get_file_as_string(path).strip_edges()
-		if chunk.is_empty():
-			push_error("MYU: empty animation chunk: " + path)
-			return null
-		encoded += chunk
-
-	var bytes := Marshalls.base64_to_raw(encoded)
-	if bytes.is_empty():
-		push_error("MYU: invalid animated sheet base64")
-		return null
-
-	var image := Image.new()
-	var error := image.load_webp_from_buffer(bytes)
-	if error != OK:
-		push_error("MYU: animated WebP decode failed error=" + str(error))
-		return null
-
-	return ImageTexture.create_from_image(image)
+func _add_animation(frames: SpriteFrames, animation: StringName, row: int, count: int, fps: float) -> void:
+	frames.add_animation(animation)
+	frames.set_animation_speed(animation,fps)
+	for column in count:
+		var texture := AtlasTexture.new()
+		texture.atlas = SHEET
+		texture.region = Rect2(column*32,row*56,32,56)
+		frames.add_frame(animation,texture)
