@@ -2,15 +2,15 @@
 config_version=5
 
 [application]
-config/name="MYU — Pixel Art Build"
+config/name="MYU — HD Pixel Art Build"
 run/main_scene="res://scenes/main.tscn"
 config/features=PackedStringArray("4.7")
 
 [display]
-window/size/viewport_width=512
-window/size/viewport_height=288
-window/size/window_width_override=1024
-window/size/window_height_override=576
+window/size/viewport_width=1024
+window/size/viewport_height=576
+window/size/window_width_override=1280
+window/size/window_height_override=720
 window/stretch/mode="canvas_items"
 window/stretch/aspect="keep"
 
@@ -22,4 +22,4 @@ textures/default_filters/use_nearest_mipmap_filter=false
 textures/vram_compression/import_etc2_astc=true
 2d/snap/snap_2d_transforms_to_pixel=true
 2d/snap/snap_2d_vertices_to_pixel=true
-environment/defaults/default_clear_color=Color(0.02, 0.02, 0.035, 1)
+environment/defaults/default_clear_color=Color(0.018, 0.019, 0.032, 1)
