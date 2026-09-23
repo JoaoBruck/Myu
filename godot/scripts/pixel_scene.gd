@@ -80,30 +80,33 @@ func _texture_from_b64_webp_chunks(paths: Array) -> Texture2D:
 	return ImageTexture.create_from_image(image)
 
 func _build_collision_geometry() -> void:
-	# Scene bounds.
-	_add_static_rect(Vector2(512, 190), Vector2(1100, 18), "NorthWalkLimit")
-	_add_static_rect(Vector2(512, 568), Vector2(1100, 18), "SouthWalkLimit")
-	_add_static_rect(Vector2(8, 330), Vector2(16, 500), "WestLimit")
-	_add_static_rect(Vector2(1016, 330), Vector2(16, 500), "EastLimit")
+	# World perimeter. The lower corners remain blocked while the crosswalk stays open.
+	_add_static_rect(Vector2(512, 184), Vector2(1100, 16), "NorthWalkLimit")
+	_add_static_rect(Vector2(512, 568), Vector2(1100, 16), "SouthWalkLimit")
+	_add_static_rect(Vector2(8, 360), Vector2(16, 430), "WestLimit")
+	_add_static_rect(Vector2(1016, 360), Vector2(16, 430), "EastLimit")
 
-	# Café / patio.
-	_add_static_rect(Vector2(240, 157), Vector2(480, 176), "CafeFacade")
-	_add_static_rect(Vector2(292, 286), Vector2(155, 44), "CafeTables")
-	_add_static_rect(Vector2(348, 319), Vector2(52, 50), "CafeBoard")
+	# Café façade and exterior furniture, aligned to the 1672×941 source.
+	_add_static_rect(Vector2(247, 143), Vector2(494, 254), "CafeFacade")
+	_add_static_rect(Vector2(254, 250), Vector2(138, 54), "CafeTables")
+	_add_static_rect(Vector2(342, 252), Vector2(50, 70), "CafeBoard")
+	_add_static_rect(Vector2(455, 258), Vector2(38, 70), "CafePlanters")
 
-	# Street furniture / tree.
-	_add_static_rect(Vector2(566, 256), Vector2(34, 104), "TreeTrunk")
-	_add_static_rect(Vector2(654, 304), Vector2(118, 34), "Bench")
-	_add_static_rect(Vector2(716, 258), Vector2(22, 124), "LampPost")
-	_add_static_rect(Vector2(814, 306), Vector2(48, 56), "Bin")
+	# Tree / bench / lamp / bin.
+	_add_static_rect(Vector2(563, 248), Vector2(40, 96), "TreeTrunk")
+	_add_static_rect(Vector2(628, 258), Vector2(92, 30), "Bench")
+	_add_static_rect(Vector2(716, 246), Vector2(22, 122), "LampPost")
+	_add_static_rect(Vector2(793, 255), Vector2(44, 52), "Bin")
 
-	# Riverside rail and descending side.
-	_add_static_rect(Vector2(870, 226), Vector2(300, 16), "RiverRailTop")
-	_add_static_rect(Vector2(935, 317), Vector2(16, 132), "RiverRailSide")
+	# Riverside guard rails and the right descending path.
+	_add_static_rect(Vector2(875, 167), Vector2(292, 18), "UpperRiverRail")
+	_add_static_rect(Vector2(702, 211), Vector2(276, 14), "FrontRiverRail")
+	_add_static_rect(Vector2(936, 329), Vector2(16, 154), "RightRampRail")
+	_add_static_rect(Vector2(844, 313), Vector2(58, 74), "DirectionSign")
 
-	# Foreground architecture keeps the crosswalk corridor open.
-	_add_static_rect(Vector2(116, 548), Vector2(232, 56), "ForegroundLeft")
-	_add_static_rect(Vector2(930, 548), Vector2(188, 56), "ForegroundRight")
+	# Foreground masses: they close the corners but preserve the central road/crosswalk.
+	_add_static_rect(Vector2(112, 548), Vector2(224, 56), "ForegroundLeft")
+	_add_static_rect(Vector2(927, 548), Vector2(194, 56), "ForegroundRight")
 
 func _add_static_rect(center: Vector2, size: Vector2, body_name: String) -> void:
 	var body := StaticBody2D.new()
@@ -121,56 +124,90 @@ func _add_static_rect(center: Vector2, size: Vector2, body_name: String) -> void
 	collision_root.add_child(body)
 
 func _build_depth_occluders() -> void:
-	# These polygons redraw selected pieces of the original HD scene above/below
-	# the player according to each object's ground contact point.
+	# Re-draw selected regions of the original HD scene inside the y-sorted layer.
+	# This keeps the original art while allowing the player to pass naturally
+	# behind trunks, posts, rails and foreground masses.
 	_add_textured_occluder(
 		"TreeCanopy",
 		[
-			Vector2(630, 0), Vector2(1120, 0), Vector2(1135, 120),
-			Vector2(1090, 220), Vector2(1010, 295), Vector2(890, 320),
-			Vector2(780, 292), Vector2(690, 230), Vector2(650, 145)
+			Vector2(620, 0), Vector2(1140, 0), Vector2(1150, 120),
+			Vector2(1110, 220), Vector2(1045, 290), Vector2(980, 330),
+			Vector2(885, 330), Vector2(795, 290), Vector2(710, 235),
+			Vector2(650, 155)
 		],
 		430.0
 	)
 	_add_textured_occluder(
 		"TreeTrunkFront",
 		[
-			Vector2(858, 215), Vector2(938, 215),
-			Vector2(936, 455), Vector2(875, 455)
+			Vector2(880, 165), Vector2(988, 165),
+			Vector2(980, 458), Vector2(895, 458)
 		],
-		455.0
+		458.0
 	)
 	_add_textured_occluder(
 		"MainLamp",
 		[
-			Vector2(1034, 35), Vector2(1092, 35),
-			Vector2(1092, 500), Vector2(1034, 500)
+			Vector2(1142, 42), Vector2(1210, 42),
+			Vector2(1210, 482), Vector2(1142, 482)
 		],
-		500.0
+		482.0
+	)
+	_add_textured_occluder(
+		"BenchFront",
+		[
+			Vector2(958, 348), Vector2(1110, 348),
+			Vector2(1110, 466), Vector2(958, 466)
+		],
+		466.0
 	)
 	_add_textured_occluder(
 		"CafeBoardFront",
 		[
-			Vector2(438, 365), Vector2(540, 365),
-			Vector2(540, 545), Vector2(438, 545)
+			Vector2(515, 348), Vector2(606, 348),
+			Vector2(606, 466), Vector2(515, 466)
 		],
-		545.0
+		466.0
 	)
 	_add_textured_occluder(
-		"RightSignAndRail",
+		"RightDirectionSign",
 		[
-			Vector2(1190, 355), Vector2(1515, 355), Vector2(1515, 605),
-			Vector2(1450, 605), Vector2(1380, 535), Vector2(1190, 520)
+			Vector2(1330, 412), Vector2(1468, 412),
+			Vector2(1468, 575), Vector2(1330, 575)
 		],
-		605.0
+		575.0
+	)
+	_add_textured_occluder(
+		"RightRampFrontRail",
+		[
+			Vector2(1432, 388), Vector2(1672, 388), Vector2(1672, 690),
+			Vector2(1600, 690), Vector2(1510, 590), Vector2(1432, 520)
+		],
+		690.0
 	)
 	_add_textured_occluder(
 		"ForegroundUtility",
 		[
-			Vector2(1000, 585), Vector2(1225, 570), Vector2(1300, 864),
-			Vector2(930, 864), Vector2(930, 705)
+			Vector2(1115, 646), Vector2(1270, 640), Vector2(1330, 941),
+			Vector2(1010, 941), Vector2(1035, 785)
 		],
-		790.0
+		900.0
+	)
+	_add_textured_occluder(
+		"ForegroundLeftMass",
+		[
+			Vector2(0, 500), Vector2(255, 500), Vector2(500, 700),
+			Vector2(500, 941), Vector2(0, 941)
+		],
+		900.0
+	)
+	_add_textured_occluder(
+		"ForegroundRightMass",
+		[
+			Vector2(1370, 590), Vector2(1672, 570),
+			Vector2(1672, 941), Vector2(1335, 941)
+		],
+		900.0
 	)
 
 func _add_textured_occluder(
@@ -187,7 +224,7 @@ func _add_textured_occluder(
 	var uv_points := PackedVector2Array()
 
 	for source_point in source_points:
-		var source := source_point as Vector2
+		var source: Vector2 = source_point
 		var world := source * _source_to_world
 		world_points.append(world - holder.position)
 		uv_points.append(source)
