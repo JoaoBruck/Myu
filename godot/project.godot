@@ -1,19 +1,15 @@
-; Engine configuration file.
 config_version=5
-
 [application]
-config/name="MYU — HD Pixel Art Build"
+config/name="MYU — Lume Café · 17:40"
 run/main_scene="res://scenes/main.tscn"
 config/features=PackedStringArray("4.7")
-
 [display]
 window/size/viewport_width=1024
 window/size/viewport_height=576
 window/size/window_width_override=1280
 window/size/window_height_override=720
-window/stretch/mode="canvas_items"
+window/stretch/mode="viewport"
 window/stretch/aspect="keep"
-
 [rendering]
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
@@ -21,5 +17,41 @@ textures/canvas_textures/default_texture_filter=0
 textures/default_filters/use_nearest_mipmap_filter=false
 textures/vram_compression/import_etc2_astc=true
 2d/snap/snap_2d_transforms_to_pixel=true
-2d/snap/snap_2d_vertices_to_pixel=true
-environment/defaults/default_clear_color=Color(0.018, 0.019, 0.032, 1)
+2d/snap/snap_2d_vertices_to_pixel=false
+environment/defaults/default_clear_color=Color(0.018,0.019,0.032,1)
+[input]
+
+move_left={
+"deadzone":0.2,
+"events":[Object(InputEventKey,"physical_keycode":65), Object(InputEventKey,"physical_keycode":4194319)]
+}
+
+move_right={
+"deadzone":0.2,
+"events":[Object(InputEventKey,"physical_keycode":68), Object(InputEventKey,"physical_keycode":4194321)]
+}
+
+move_up={
+"deadzone":0.2,
+"events":[Object(InputEventKey,"physical_keycode":87), Object(InputEventKey,"physical_keycode":4194320)]
+}
+
+move_down={
+"deadzone":0.2,
+"events":[Object(InputEventKey,"physical_keycode":83), Object(InputEventKey,"physical_keycode":4194322)]
+}
+
+cycle_time={
+"deadzone":0.2,
+"events":[Object(InputEventKey,"physical_keycode":84)]
+}
+
+toggle_rain={
+"deadzone":0.2,
+"events":[Object(InputEventKey,"physical_keycode":82)]
+}
+
+debug_collision={
+"deadzone":0.2,
+"events":[Object(InputEventKey,"physical_keycode":4194334)]
+}

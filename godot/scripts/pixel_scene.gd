@@ -1,191 +1,107 @@
 extends Node2D
-
-const WORLD_SIZE := Vector2(1024, 576)
-
+const Geometry = preload("res://data/lume_geometry.gd")
+const DAY := preload("res://art/lume_day.png")
+const NIGHT := preload("res://art/lume_night.png")
+const GRADE := preload("res://shaders/time_grade.gdshader")
+const WORLD_SIZE := Vector2(1024,576)
+const TIME_LABELS := ["Manhã · 08:00","Dia · 13:00","Entardecer · 17:40","Noite · 21:00"]
+const PROFILES := [
+	{"ambient":Color(1.03,0.98,0.99),"exposure":1.04,"saturation":0.95,"warm":0.35,"sun":Vector2(-0.78,0.30),"length":0.50,"lamp":0.15},
+	{"ambient":Color(1.0,0.99,1.0),"exposure":1.02,"saturation":1.0,"warm":0.35,"sun":Vector2(0.25,0.36),"length":0.24,"lamp":0.10},
+	{"ambient":Color(0.84,0.82,1.0),"exposure":0.99,"saturation":0.91,"warm":0.95,"sun":Vector2(0.82,0.32),"length":0.66,"lamp":0.85},
+	{"ambient":Color(0.75,0.77,0.97),"exposure":0.95,"saturation":0.92,"warm":1.0,"sun":Vector2(-0.30,0.30),"length":0.30,"lamp":1.0}
+]
+signal time_changed(index: int)
+signal rain_changed(enabled: bool)
+var time_index := 2
+var rain_enabled := true
+var grade: ShaderMaterial
+var foreground: Array[Polygon2D] = []
 @onready var background: Sprite2D = $Background
 @onready var collision_root: Node2D = $CollisionGeometry
 @onready var depth_world: Node2D = $DepthWorld
-
-var _background_texture: Texture2D
-var _source_size := Vector2.ZERO
-var _source_to_world := Vector2.ONE
-
+@onready var player: CharacterBody2D = $DepthWorld/Player
 func _ready() -> void:
-	_background_texture = background.texture
-	if _background_texture == null:
-		push_error("MYU: HD background resource missing from scene")
-		return
-
-	_source_size = _background_texture.get_size()
-	if Vector2i(_source_size) != Vector2i(1672, 941):
-		push_error("MYU: unexpected HD source size=" + str(_source_size))
-		return
-
-	_source_to_world = Vector2(
-		WORLD_SIZE.x / _source_size.x,
-		WORLD_SIZE.y / _source_size.y
-	)
-
-	background.position = WORLD_SIZE * 0.5
-	background.scale = _source_to_world
-	background.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
-
+	assert(DAY.get_size() == Vector2(1536,864) and NIGHT.get_size() == DAY.get_size())
+	background.position = WORLD_SIZE*0.5
+	background.scale = Vector2.ONE*Geometry.SCALE
+	grade = ShaderMaterial.new()
+	grade.shader = GRADE
+	background.material = grade
 	_build_collision_geometry()
 	_build_depth_occluders()
-
-	print("MYU_HD_FILE_READY")
-	print("MYU_HD_SOURCE_SIZE=" + str(Vector2i(_source_size)))
-	print("MYU_PIXEL_BACKGROUND_READY")
-	print("MYU_HD_BACKGROUND_READY")
-	print("MYU_COLLISION_READY")
-	print("MYU_DEPTH_READY")
-
+	set_time_of_day(time_index)
+	for marker in ["MYU_HD_FILE_READY","MYU_HD_SOURCE_SIZE=(1536, 864)","MYU_PIXEL_BACKGROUND_READY","MYU_HD_BACKGROUND_READY","MYU_COLLISION_READY","MYU_DEPTH_READY","MYU_LUME_1740_READY"]:
+		print(marker)
+func _process(_delta: float) -> void:
+	if grade == null:
+		return
+	var profile: Dictionary = PROFILES[time_index]
+	var ambient: Color = profile.ambient
+	var warmth := 0.0
+	for source in [Vector2(480,315),Vector2(705,305),Vector2(1115,310),Vector2(1453,445)]:
+		warmth = maxf(warmth,(1.0-smoothstep(30.0,220.0,player.position.distance_to(source*Geometry.SCALE)))*profile.lamp)
+	player.sprite.modulate = ambient.lerp(Color(1.06,0.96,0.88),warmth*0.5)
+func set_time_of_day(index: int) -> void:
+	time_index = posmod(index,PROFILES.size())
+	var profile: Dictionary = PROFILES[time_index]
+	var texture: Texture2D = NIGHT if time_index == 3 else DAY
+	background.texture = texture
+	for polygon in foreground:
+		polygon.texture = texture
+	grade.set_shader_parameter("ambient",profile.ambient)
+	grade.set_shader_parameter("exposure",profile.exposure)
+	grade.set_shader_parameter("saturation",profile.saturation)
+	grade.set_shader_parameter("warm_preserve",profile.warm)
+	var shadow := player.get_node("Shadow")
+	shadow.sun_direction = profile.sun
+	shadow.sun_length = profile.length
+	shadow.lamp_strength = profile.lamp
+	shadow.opacity = 0.20 if time_index == 3 else 0.23
+	$Reflections.modulate.a = profile.lamp
+	time_changed.emit(time_index)
+func cycle_time() -> void:
+	set_time_of_day(time_index+1)
+func toggle_rain() -> void:
+	rain_enabled = not rain_enabled
+	$Weather.visible = rain_enabled
+	$Weather.set_process(rain_enabled)
+	$Reflections.visible = rain_enabled
+	rain_changed.emit(rain_enabled)
 func _build_collision_geometry() -> void:
-	_add_static_rect(Vector2(512, 184), Vector2(1100, 16), "NorthWalkLimit")
-	_add_static_rect(Vector2(512, 568), Vector2(1100, 16), "SouthWalkLimit")
-	_add_static_rect(Vector2(8, 360), Vector2(16, 430), "WestLimit")
-	_add_static_rect(Vector2(1016, 360), Vector2(16, 430), "EastLimit")
-
-	_add_static_rect(Vector2(247, 143), Vector2(494, 254), "CafeFacade")
-	_add_static_rect(Vector2(254, 250), Vector2(138, 54), "CafeTables")
-	_add_static_rect(Vector2(342, 252), Vector2(50, 70), "CafeBoard")
-	_add_static_rect(Vector2(455, 258), Vector2(38, 70), "CafePlanters")
-
-	_add_static_rect(Vector2(563, 248), Vector2(40, 96), "TreeTrunk")
-	_add_static_rect(Vector2(628, 258), Vector2(92, 30), "Bench")
-	_add_static_rect(Vector2(716, 246), Vector2(22, 122), "LampPost")
-	_add_static_rect(Vector2(793, 255), Vector2(44, 52), "Bin")
-
-	_add_static_rect(Vector2(875, 167), Vector2(292, 18), "UpperRiverRail")
-	_add_static_rect(Vector2(702, 211), Vector2(276, 14), "FrontRiverRail")
-	_add_static_rect(Vector2(936, 329), Vector2(16, 154), "RightRampRail")
-	_add_static_rect(Vector2(844, 313), Vector2(58, 74), "DirectionSign")
-
-	_add_static_rect(Vector2(112, 548), Vector2(224, 56), "ForegroundLeft")
-	_add_static_rect(Vector2(927, 548), Vector2(194, 56), "ForegroundRight")
-
-func _add_static_rect(center: Vector2, size: Vector2, body_name: String) -> void:
-	var body := StaticBody2D.new()
-	body.name = body_name
-	body.position = center
-	body.collision_layer = 1
-	body.collision_mask = 1
-
-	var shape_node := CollisionShape2D.new()
-	var shape := RectangleShape2D.new()
-	shape.size = size
-	shape_node.shape = shape
-
-	body.add_child(shape_node)
-	collision_root.add_child(body)
-
+	for entry in Geometry.blockers():
+		var body := StaticBody2D.new()
+		body.name = entry.name
+		body.collision_layer = 1
+		body.collision_mask = 2
+		var shape := CollisionPolygon2D.new()
+		shape.polygon = Geometry.to_world(entry.polygon)
+		body.add_child(shape)
+		collision_root.add_child(body)
 func _build_depth_occluders() -> void:
-	_add_textured_occluder(
-		"TreeCanopy",
-		[
-			Vector2(620, 0), Vector2(1140, 0), Vector2(1150, 120),
-			Vector2(1110, 220), Vector2(1045, 290), Vector2(980, 330),
-			Vector2(885, 330), Vector2(795, 290), Vector2(710, 235),
-			Vector2(650, 155)
-		],
-		430.0
-	)
-	_add_textured_occluder(
-		"TreeTrunkFront",
-		[
-			Vector2(880, 165), Vector2(988, 165),
-			Vector2(980, 458), Vector2(895, 458)
-		],
-		458.0
-	)
-	_add_textured_occluder(
-		"MainLamp",
-		[
-			Vector2(1142, 42), Vector2(1210, 42),
-			Vector2(1210, 482), Vector2(1142, 482)
-		],
-		482.0
-	)
-	_add_textured_occluder(
-		"BenchFront",
-		[
-			Vector2(958, 348), Vector2(1110, 348),
-			Vector2(1110, 466), Vector2(958, 466)
-		],
-		466.0
-	)
-	_add_textured_occluder(
-		"CafeBoardFront",
-		[
-			Vector2(515, 348), Vector2(606, 348),
-			Vector2(606, 466), Vector2(515, 466)
-		],
-		466.0
-	)
-	_add_textured_occluder(
-		"RightDirectionSign",
-		[
-			Vector2(1330, 412), Vector2(1468, 412),
-			Vector2(1468, 575), Vector2(1330, 575)
-		],
-		575.0
-	)
-	_add_textured_occluder(
-		"RightRampFrontRail",
-		[
-			Vector2(1432, 388), Vector2(1672, 388), Vector2(1672, 690),
-			Vector2(1600, 690), Vector2(1510, 590), Vector2(1432, 520)
-		],
-		690.0
-	)
-	_add_textured_occluder(
-		"ForegroundUtility",
-		[
-			Vector2(1115, 646), Vector2(1270, 640), Vector2(1330, 941),
-			Vector2(1010, 941), Vector2(1035, 785)
-		],
-		900.0
-	)
-	_add_textured_occluder(
-		"ForegroundLeftMass",
-		[
-			Vector2(0, 500), Vector2(255, 500), Vector2(500, 700),
-			Vector2(500, 941), Vector2(0, 941)
-		],
-		900.0
-	)
-	_add_textured_occluder(
-		"ForegroundRightMass",
-		[
-			Vector2(1370, 590), Vector2(1672, 570),
-			Vector2(1672, 941), Vector2(1335, 941)
-		],
-		900.0
-	)
-
-func _add_textured_occluder(
-	occluder_name: String,
-	source_points: Array,
-	base_source_y: float
-) -> void:
-	var holder := Node2D.new()
-	holder.name = occluder_name
-	holder.position = Vector2(0, base_source_y * _source_to_world.y)
-
-	var polygon := Polygon2D.new()
-	var world_points := PackedVector2Array()
-	var uv_points := PackedVector2Array()
-
-	for source_point in source_points:
-		var source: Vector2 = source_point
-		var world := source * _source_to_world
-		world_points.append(world - holder.position)
-		uv_points.append(source)
-
-	polygon.polygon = world_points
-	polygon.uv = uv_points
-	polygon.texture = _background_texture
-	polygon.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
-
-	holder.add_child(polygon)
-	depth_world.add_child(holder)
+	for entry in Geometry.occluders():
+		var holder := Node2D.new()
+		holder.name = entry.name
+		holder.position.y = entry.base*Geometry.SCALE
+		var polygon := Polygon2D.new()
+		var points := PackedVector2Array()
+		for source_point in entry.polygon:
+			points.append(source_point*Geometry.SCALE-holder.position)
+		polygon.polygon = points
+		polygon.uv = entry.polygon
+		polygon.texture = DAY
+		polygon.material = grade
+		polygon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		holder.add_child(polygon)
+		depth_world.add_child(holder)
+		foreground.append(polygon)
+func _unhandled_key_input(event: InputEvent) -> void:
+	if event.is_action_pressed("cycle_time"):
+		cycle_time()
+		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("toggle_rain"):
+		toggle_rain()
+		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("debug_collision"):
+		$CollisionDebug.visible = not $CollisionDebug.visible
+		get_viewport().set_input_as_handled()
