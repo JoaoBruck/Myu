@@ -1,3 +1,13 @@
+# MYU — Lume Café · Godot
+
+[Jogar no navegador](https://joaobruck.github.io/Myu/godot/) · [Projeto e controles](godot/README.md)
+
+Movimento em oito direções, colisão nos pés, animações, sombra projetada, profundidade dos objetos e quatro horários. O jogo abre nas **17:40**, com tons frios e âmbar localizado nas luzes do café.
+
+**WASD/setas** para andar, **T** para o horário, **R** para chuva e **F3** para visualizar colisões. No celular, use o analógico e os botões.
+
+---
+
 # MYU
 
 ## Build estável
@@ -15,10 +25,10 @@ Rota alternativa:
 https://joaobruck.github.io/Myu/streetlab/
 
 ### Godot
-- viewport lógico: **512×288**;
+- viewport lógico: **1024×576**;
 - cenário do Lume Café em pixel art;
 - protagonista em **32×56 por frame**, no jogo;
-- **idle animado com 4 frames** mesmo quando a personagem está parada;
+- **idle frontal com 4 frames**, preservando a direção nas demais paradas;
 - caminhada animada com **6 frames** para baixo, cima, direita e esquerda;
 - movimento em 8 direções;
 - teclado no desktop e analógico por toque no celular;

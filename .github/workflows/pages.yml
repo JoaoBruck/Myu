@@ -26,23 +26,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
 
-      - name: Prepare clean Godot art source
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p godot/art
-          if [ ! -f godot/art/lume_cafe_hd.png ]; then
-            cp godot/assets/lume_cafe_hd.png godot/art/lume_cafe_hd.png
-            test "$(stat -c%s godot/art/lume_cafe_hd.png)" -gt 2000000
-
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add -f godot/art/lume_cafe_hd.png
-            if git commit -m "Move HD Lume scene into Godot import path [skip ci]"; then
-              git push origin HEAD:main || echo "Could not persist HD art copy; continuing with current build workspace."
-            fi
-          fi
-
       - name: Prepare stable MYU root
         shell: bash
         run: |
@@ -87,13 +70,14 @@ jobs:
           unzip -q /tmp/godot_templates.tpz -d /tmp/godot-templates
           cp -a /tmp/godot-templates/templates/. "$HOME/.local/share/godot/export_templates/4.7.2.stable/"
 
-      - name: Validate and build Godot HD pixel version
+      - name: Validate and build Lume 17:40
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p _site/godot
-          test -f godot/art/lume_cafe_hd.png
-          test "$(stat -c%s godot/art/lume_cafe_hd.png)" -gt 2000000
+          test -f godot/art/lume_day.png
+          test -f godot/art/lume_night.png
+          test -f godot/art/myu_walk.png
 
           IMPORT_LOG=/tmp/godot-import.log
           /tmp/godot/Godot_v4.7.2-stable_linux.x86_64 --headless --path godot --editor --quit 2>&1 | tee "$IMPORT_LOG"
@@ -101,10 +85,16 @@ jobs:
             exit 1
           fi
 
+          /tmp/godot/Godot_v4.7.2-stable_linux.x86_64 --headless --path godot --script res://tests/test_lume.gd 2>&1 | tee /tmp/godot-tests.log
+          grep -Eq "MYU_TEST_RESULT checks=[0-9]+ failures=0" /tmp/godot-tests.log
+          if grep -E "SCRIPT ERROR:|Parse Error:|ERROR:" /tmp/godot-tests.log; then
+            exit 1
+          fi
+
           RUNTIME_LOG=/tmp/godot-runtime.log
           /tmp/godot/Godot_v4.7.2-stable_linux.x86_64 --headless --path godot --quit-after 5 2>&1 | tee "$RUNTIME_LOG"
           grep -q "MYU_HD_FILE_READY" "$RUNTIME_LOG"
-          grep -q "MYU_HD_SOURCE_SIZE=(1672, 941)" "$RUNTIME_LOG"
+          grep -q "MYU_HD_SOURCE_SIZE=(1536, 864)" "$RUNTIME_LOG"
           grep -q "MYU_PIXEL_BACKGROUND_READY" "$RUNTIME_LOG"
           grep -q "MYU_HD_BACKGROUND_READY" "$RUNTIME_LOG"
           grep -q "MYU_COLLISION_READY" "$RUNTIME_LOG"
@@ -134,7 +124,7 @@ jobs:
           PACK_LOG=/tmp/godot-exported-pack-runtime.log
           /tmp/godot/Godot_v4.7.2-stable_linux.x86_64 --headless --main-pack "$GITHUB_WORKSPACE/_site/godot/index.pck" --quit-after 5 2>&1 | tee "$PACK_LOG"
           grep -q "MYU_HD_FILE_READY" "$PACK_LOG"
-          grep -q "MYU_HD_SOURCE_SIZE=(1672, 941)" "$PACK_LOG"
+          grep -q "MYU_HD_SOURCE_SIZE=(1536, 864)" "$PACK_LOG"
           grep -q "MYU_HD_BACKGROUND_READY" "$PACK_LOG"
           grep -q "MYU_ANIMATED_PLAYER_READY" "$PACK_LOG"
           grep -q "MYU_PLAYER_SHADOW_READY" "$PACK_LOG"
@@ -145,6 +135,7 @@ jobs:
             exit 1
           fi
 
+          git rev-parse HEAD > _site/godot/version.txt
           touch _site/.nojekyll
 
       - uses: actions/upload-pages-artifact@v3
