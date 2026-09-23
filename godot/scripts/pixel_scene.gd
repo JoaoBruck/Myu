@@ -18,9 +18,9 @@ var _source_size := Vector2.ZERO
 var _source_to_world := Vector2.ONE
 
 func _ready() -> void:
-	_background_texture = _texture_from_b64_webp_chunks(HD_CHUNKS)
+	_background_texture = _load_hd_background()
 	if _background_texture == null:
-		push_error("MYU: failed to decode HD Lume Cafe background")
+		push_error("MYU: failed to load HD Lume Cafe background")
 		return
 
 	_source_size = _background_texture.get_size()
@@ -41,6 +41,20 @@ func _ready() -> void:
 	print("MYU_HD_BACKGROUND_READY")
 	print("MYU_COLLISION_READY")
 	print("MYU_DEPTH_READY")
+
+func _load_hd_background() -> Texture2D:
+	var hd_path := "res://assets/lume_cafe_hd.png"
+	if FileAccess.file_exists(hd_path):
+		var image := Image.new()
+		var error := image.load(hd_path)
+		if error == OK:
+			print("MYU_HD_FILE_READY")
+			print("MYU_HD_SOURCE_SIZE=" + str(image.get_size()))
+			return ImageTexture.create_from_image(image)
+		push_error("MYU: HD PNG load failed error=" + str(error))
+
+	print("MYU: HD PNG missing; using temporary embedded fallback")
+	return _texture_from_b64_webp_chunks(HD_CHUNKS)
 
 func _texture_from_b64_webp_chunks(paths: Array) -> Texture2D:
 	var encoded := ""
