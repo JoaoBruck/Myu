@@ -10,6 +10,7 @@ func _ready() -> void:
 	for i in DROP_COUNT:
 		_drops.append(Vector2(_rng.randi_range(0, 511), _rng.randi_range(0, 287)))
 		_speeds.append(_rng.randf_range(120.0, 210.0))
+	print("MYU_RAIN_READY")
 	queue_redraw()
 
 func _process(delta: float) -> void:
