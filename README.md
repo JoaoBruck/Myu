@@ -6,6 +6,8 @@ Movimento em oito direções, colisão nos pés, animações, sombra projetada, 
 
 **WASD/setas** para andar, **T** para o horário, **R** para chuva e **F3** para visualizar colisões. No celular, use o analógico e os botões.
 
+![Lume Café às 17:40, captura real do Godot](docs/lume-1740.png)
+
 ---
 
 # MYU
