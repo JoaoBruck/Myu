@@ -8,6 +8,8 @@ Movimento em oito direções, colisão nos pés, animações, sombra projetada e
 
 ![Lume Café, captura real do Godot](docs/lume-1740.png)
 
+[Prévia da caminhada lateral no Godot](docs/lume-walk.mp4)
+
 ---
 
 # MYU
