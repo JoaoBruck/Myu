@@ -2,13 +2,19 @@ extends SceneTree
 ## Deterministic game import of newly generated art; the old reference is never imported.
 func _initialize() -> void:
 	_prepare("myu_seated_generated.png","myu_seated.png",Vector2i(32,56),44,54)
-	_prepare("myu_portrait_generated.png","myu_portrait.png",Vector2i(48,48),46,47)
+	_prepare("myu_portrait_generated.png","myu_portrait.png",Vector2i(40,40),38,39)
 	print("MYU_SEATED_ART_IMPORTED")
 	quit()
 func _prepare(source_name: String, target: String, cell: Vector2i, height: int, baseline: int) -> void:
 	var img := Image.load_from_file("res://source_art/"+source_name)
 	assert(img != null and img.detect_alpha() != Image.ALPHA_NONE,"New sprite must have real transparency")
 	img.convert(Image.FORMAT_RGBA8)
+	# Generated PNGs can contain nearly invisible alpha noise outside the figure.
+	# Exclude it before measuring so the visible figure fills the intended cell.
+	for y in img.get_height():
+		for x in img.get_width():
+			if img.get_pixel(x,y).a < 0.025:
+				img.set_pixel(x,y,Color.TRANSPARENT)
 	img = img.get_region(img.get_used_rect())
 	var width := mini(cell.x-2,roundi(float(img.get_width())/img.get_height()*height))
 	img.resize(width,height,Image.INTERPOLATE_NEAREST)

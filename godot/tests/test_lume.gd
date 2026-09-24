@@ -182,6 +182,8 @@ func _run() -> void:
 		moving_boots = moving_boots and atlas.get_region(Rect2i(0,row*56+44,32,12)).get_data() != atlas.get_region(Rect2i(32,row*56+44,32,12)).get_data()
 	check(stable_head and moving_boots,"side gait keeps the face stable while the feet animate")
 	check(InputMap.action_get_events("move_up").size() == 2 and InputMap.action_get_events("move_left")[1].physical_keycode == KEY_LEFT,"WASD and arrow bindings")
+	var seated_bounds: Rect2i = player.SEATED.get_image().get_used_rect()
+	check(seated_bounds.size.y >= 43 and seated_bounds.end.y == 54,"seated art fills its cell and meets its foot baseline")
 	var seat = world.get_node("SeatInteraction")
 	await place(Vector2(800,640))
 	seat.toggle()
