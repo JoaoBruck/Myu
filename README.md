@@ -2,11 +2,11 @@
 
 [Jogar no navegador](https://joaobruck.github.io/Myu/godot/) · [Projeto e controles](godot/README.md)
 
-Movimento em oito direções, colisão nos pés, animações, sombra projetada, profundidade dos objetos e quatro horários. O jogo abre nas **17:40**, com tons frios e âmbar localizado nas luzes do café.
+Movimento em oito direções, colisão nos pés, animações, sombra projetada e profundidade dos objetos. **17:40 é a identidade visual**: entardecer frio e luzes quentes do café. Chuva automática, sem relógio ou seletores na tela.
 
-**WASD/setas** para andar, **T** para o horário, **R** para chuva e **F3** para visualizar colisões. No celular, use o analógico e os botões.
+**WASD/setas** para andar e **F3** para visualizar colisões. No celular, use o analógico.
 
-![Lume Café às 17:40, captura real do Godot](docs/lume-1740.png)
+![Lume Café, captura real do Godot](docs/lume-1740.png)
 
 ---
 
@@ -35,7 +35,7 @@ https://joaobruck.github.io/Myu/streetlab/
 - movimento em 8 direções;
 - teclado no desktop e analógico por toque no celular;
 - hitbox concentrada nos pés;
-- **chuva ativa** sobre a cena;
+- chuva automática, com transições suaves e pausas;
 - export Web sem threads para maior compatibilidade mobile;
 - build validado pelo Godot 4.7.2 antes do deploy.
 

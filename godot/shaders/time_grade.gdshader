@@ -4,6 +4,7 @@ uniform vec4 ambient : source_color = vec4(0.80,0.80,0.96,1.0);
 uniform float exposure = 1.0;
 uniform float saturation = 0.9;
 uniform float warm_preserve = 0.9;
+uniform float cloud_cover = 0.0;
 float ellipse_mask(vec2 uv, vec2 center, vec2 radius) {
 	return 1.0-smoothstep(0.70,1.0,length((uv-center)/radius));
 }
@@ -11,7 +12,7 @@ void fragment() {
 	vec4 texel=texture(TEXTURE,UV);
 	vec3 color=texel.rgb;
 	float luma=dot(color,vec3(0.2126,0.7152,0.0722));
-	vec3 graded=mix(vec3(luma),color,saturation)*ambient.rgb*exposure;
+	vec3 graded=mix(vec3(luma),color,saturation)*ambient.rgb*exposure*(1.0-cloud_cover);
 	float lit_zone=max(ellipse_mask(UV,vec2(0.308,0.338),vec2(0.153,0.168)),ellipse_mask(UV,vec2(0.044,0.344),vec2(0.040,0.083)));
 	lit_zone=max(lit_zone,ellipse_mask(UV,vec2(0.457,0.271),vec2(0.027,0.065)));
 	lit_zone=max(lit_zone,ellipse_mask(UV,vec2(0.726,0.104),vec2(0.029,0.074)));

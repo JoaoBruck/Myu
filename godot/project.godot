@@ -1,6 +1,6 @@
 config_version=5
 [application]
-config/name="MYU — Lume Café · 17:40"
+config/name="MYU — Lume Café"
 run/main_scene="res://scenes/main.tscn"
 config/features=PackedStringArray("4.7")
 [display]
@@ -39,16 +39,6 @@ move_up={
 move_down={
 "deadzone":0.2,
 "events":[Object(InputEventKey,"physical_keycode":83), Object(InputEventKey,"physical_keycode":4194322)]
-}
-
-cycle_time={
-"deadzone":0.2,
-"events":[Object(InputEventKey,"physical_keycode":84)]
-}
-
-toggle_rain={
-"deadzone":0.2,
-"events":[Object(InputEventKey,"physical_keycode":82)]
 }
 
 debug_collision={

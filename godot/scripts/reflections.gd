@@ -1,6 +1,8 @@
 extends Node2D
 
 var _time := 0.0
+var wetness := 0.72
+var rain_intensity := 0.34
 
 func _ready() -> void:
 	print("MYU_REFLECTIONS_READY")
@@ -10,16 +12,16 @@ func _process(delta: float) -> void:
 	queue_redraw()
 
 func _draw() -> void:
-	var pulse := 0.72 + sin(_time * 1.5) * 0.055
+	var pulse := (0.72 + sin(_time * 1.5) * 0.055)*wetness
 
 	_draw_fragmented_reflection(286, 326, 226, Color(0.96, 0.52, 0.29, 0.13 * pulse))
 	_draw_fragmented_reflection(710, 312, 242, Color(1.0, 0.57, 0.29, 0.16 * pulse))
 	_draw_fragmented_reflection(464, 342, 150, Color(0.74, 0.41, 0.38, 0.08 * pulse))
 	_draw_fragmented_reflection(930, 334, 176, Color(1.0, 0.54, 0.26, 0.11 * pulse))
 
-	_draw_ripple(Vector2(565, 446), 13.0, pulse)
-	_draw_ripple(Vector2(748, 496), 9.0, pulse * 0.8)
-	_draw_ripple(Vector2(350, 470), 7.0, pulse * 0.7)
+	_draw_ripple(Vector2(565, 446), 13.0, rain_intensity)
+	_draw_ripple(Vector2(748, 496), 9.0, rain_intensity * 0.8)
+	_draw_ripple(Vector2(350, 470), 7.0, rain_intensity * 0.7)
 
 func _draw_fragmented_reflection(x: float, y: float, height: float, color: Color) -> void:
 	var segment_y: float = y

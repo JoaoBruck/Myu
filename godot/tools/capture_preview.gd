@@ -22,15 +22,36 @@ func _capture() -> void:
 	world = load("res://scenes/main.tscn").instantiate()
 	root.add_child(world)
 	await process_frame
-	for mode in 4:
-		world.set_time_of_day(mode)
-		await _save("lume_mode_%d" % mode)
-	world.set_time_of_day(2)
+	await _save("lume_cold")
+	var weather = world.get_node("Weather")
+	weather.set_process(false)
+	weather.elapsed = 160.0
+	weather.advance_weather(0.0)
+	weather.queue_redraw()
+	await _save("lume_dry")
+	weather.elapsed = 48.0
+	weather.advance_weather(0.0)
+	weather.queue_redraw()
+	await _save("lume_rain")
+	weather.set_process(true)
 	for entry in [["board",Vector2(516,429)],["sign",Vector2(1338,557)],["lamp",Vector2(1085,393)],["river",Vector2(1250,290)]]:
 		world.player.position = entry[1]*(2.0/3.0)
 		await _save("lume_"+entry[0])
 	world.player.position = Vector2(414,337)
 	world.get_node("CollisionDebug").visible = true
 	await _save("lume_collision")
+	world.get_node("CollisionDebug").visible = false
+	world.player.set_physics_process(false)
+	world.player.position = Vector2(340,425)
+	for index in 72:
+		for tick in 5:
+			await physics_frame
+			world.player.step_motion(Vector2.RIGHT if index < 36 else Vector2.LEFT,1.0/60.0)
+		await RenderingServer.frame_post_draw
+		var rendered := root.get_texture().get_image()
+		var center: Vector2i = Vector2i(world.player.position)
+		# Logical viewport is 1024x576; keep the character and nearby ground in view.
+		var crop := rendered.get_region(Rect2i(center-Vector2i(96,148),Vector2i(192,192)))
+		assert(crop.save_png(destination.path_join("motion_%03d.png" % index)) == OK)
 	print("MYU_RENDER_CAPTURE_OK")
 	quit()

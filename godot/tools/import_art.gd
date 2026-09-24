@@ -1,5 +1,21 @@
 extends SceneTree
-## Import original JPEGs and supplied sprite poses without inventing frames.
+## Register the supplied illustration poses around hand-measured hip pivots.
+## One scale per direction; never scale a frame to its individual bounding box.
+const ROW_SCALE := [0.200,0.213,0.218,0.242,0.234]
+const HIP_X := [
+	[340,531,725,918],
+	[315,468,621,773,926,1080],
+	[312,465,619,771,925,1078],
+	[314,466,621,772,926,1085],
+	[300,453,608,762,918,1071]
+]
+const HIP_Y := [
+	[284,284,284,284],
+	[598,598,599,597,598,598],
+	[875,875,875,875,875,875],
+	[1125,1126,1125,1127,1124,1126],
+	[1389,1388,1387,1387,1388,1388]
+]
 func _initialize() -> void:
 	for period in ["day","night"]:
 		var backdrop := Image.load_from_file("res://source_art/lume_%s.jpg" % period)
@@ -19,10 +35,22 @@ func _initialize() -> void:
 			_remove_speckles(crop)
 			var bounds := crop.get_used_rect()
 			assert(bounds.size.y > 100,"Missing character in crop")
-			crop = crop.get_region(bounds)
-			var width := mini(30,roundi(float(crop.get_width())/crop.get_height()*53.0))
-			crop.resize(width,53,Image.INTERPOLATE_NEAREST)
-			atlas.blit_rect(crop,Rect2i(Vector2i.ZERO,crop.get_size()),Vector2i(column*32+(32-width)/2,row*56+2))
+			# Resample into a fixed cell relative to the hips. This also preserves
+			# the sole baseline when the source pose extends an arm or a boot.
+			var hip := Vector2(HIP_X[row][column]-x,HIP_Y[row][column]-row_y[row])
+			var destination_hip := Vector2(16,46 if row < 3 else 44)
+			for cy in 56:
+				for cx in 32:
+					var sample := Vector2i(((Vector2(cx,cy)-destination_hip)/ROW_SCALE[row]+hip).round())
+					if Rect2i(Vector2i.ZERO,crop.get_size()).has_point(sample):
+						atlas.set_pixel(column*32+cx,row*56+cy,crop.get_pixelv(sample))
+	# The reference side poses redraw the face and hair on every frame.
+	# Use a single registered head per side, retaining each supplied body/leg pose.
+	# This is a cutout rig: no flip, rescale or morph of the face while walking.
+	for row in [3,4]:
+		var head := atlas.get_region(Rect2i(0,row*56,32,32))
+		for column in range(1,6):
+			atlas.blit_rect(head,Rect2i(0,0,32,32),Vector2i(column*32,row*56))
 	assert(atlas.save_png("res://art/myu_walk.png") == OK)
 	print("MYU_ART_IMPORT_OK")
 	quit()

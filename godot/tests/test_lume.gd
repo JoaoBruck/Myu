@@ -39,7 +39,7 @@ func _run() -> void:
 	await physics_frame
 	player = world.player
 	player.set_physics_process(false)
-	check(world.time_index == 2,"17:40 is default")
+	check(world.grade.get_shader_parameter("ambient").b > world.grade.get_shader_parameter("ambient").r,"cold dusk palette")
 	check(world.background.texture.get_size() == Vector2(1536,864),"source artwork included")
 	check(player.get_node("FeetCollision").shape is CapsuleShape2D,"rounded foot collider")
 	check(world.collision_root.get_child_count() >= 20,"ground footprints loaded")
@@ -89,18 +89,41 @@ func _run() -> void:
 			break
 	check(route_clear,"continuous cafe -> ramp -> riverside route")
 	var saved_position := player.position
-	for mode in 4:
-		world.set_time_of_day(mode)
-		check(world.background.texture == (world.NIGHT if mode == 3 else world.DAY),"correct art at time "+str(mode))
-		var matching := true
-		for polygon in world.foreground:
-			matching = matching and polygon.texture == world.background.texture and polygon.material == world.grade
-		check(matching and player.position == saved_position,"foreground/physics aligned at time "+str(mode))
-	world.set_time_of_day(2)
-	world.toggle_rain()
-	check(not world.get_node("Weather").visible and not world.get_node("Reflections").visible,"rain and wet reflections disabled")
-	world.toggle_rain()
-	check(world.get_node("Weather").visible,"rain restored")
+	var matching := true
+	for polygon in world.foreground:
+		matching = matching and polygon.texture == world.background.texture and polygon.material == world.grade
+	check(matching,"foreground and background share the same palette")
+	var weather = world.get_node("Weather")
+	weather.set_process(false)
+	var minimum := 1.0
+	var maximum := 0.0
+	var biggest_jump := 0.0
+	var damp_when_dry := false
+	for i in 60*260:
+		var previous_intensity: float = weather.intensity
+		weather.advance_weather(DT)
+		minimum = minf(minimum,weather.intensity)
+		maximum = maxf(maximum,weather.intensity)
+		biggest_jump = maxf(biggest_jump,absf(weather.intensity-previous_intensity))
+		if weather.intensity < 0.001 and weather.wetness > 0.35:
+			damp_when_dry = true
+	check(minimum == 0.0 and maximum > 0.65,"automatic rain includes a dry pause and stronger rain")
+	check(biggest_jump < 0.001,"weather changes smoothly including cycle wrap")
+	check(damp_when_dry,"ground stays wet after the rain stops")
+	check(player.position == saved_position,"weather never moves the player")
+	check(not InputMap.has_action("cycle_time") and not InputMap.has_action("toggle_rain"),"no manual time or weather shortcuts")
+	weather.set_process(true)
+	await place(Vector2(700,640))
+	await drive(Vector2.RIGHT,15)
+	var previous_phase: float = player.gait_distance
+	await drive(Vector2.DOWN,1)
+	var expected_phase: float = fposmod(previous_phase+player.moved_distance,player.STRIDE_DISTANCE)
+	check(absf(player.gait_distance-expected_phase) < 0.01 and player.sprite.animation == &"walk_down","turn preserves the step phase")
+	await place(Vector2(700,640))
+	previous_phase = player.gait_distance
+	await drive(Vector2.RIGHT*0.3,10)
+	var slow_travel: float = player.gait_distance-previous_phase
+	check(absf(fposmod(slow_travel,player.STRIDE_DISTANCE)-fposmod(player.position.x-700.0*(2.0/3.0),player.STRIDE_DISTANCE)) < 0.02,"analog gait matches actual distance")
 	await place(Vector2(700,640))
 	player.set_physics_process(true)
 	var key := InputEventKey.new()
@@ -118,6 +141,10 @@ func _run() -> void:
 	check(player.velocity.length() < 0.01,"key release stops movement")
 	player.set_physics_process(false)
 	var controls = world.get_node("MobileUI/MobileControls")
+	var clean_ui := controls.find_children("*","Button",true,false).is_empty()
+	for label in controls.find_children("*","Label",true,false):
+		clean_ui = clean_ui and not label.text.contains("17:40") and not label.text.contains("Chuva")
+	check(clean_ui,"no clock, weather selector or time label in the UI")
 	controls.update_joystick(controls.joystick_center+Vector2(1,0))
 	check(player.touch_input == Vector2.ZERO,"touch dead zone")
 	controls.update_joystick(controls.joystick_center+Vector2(100,0))
@@ -141,6 +168,19 @@ func _run() -> void:
 						body_pixels += 1
 			solid = solid and head_pixels > 90 and body_pixels > 80
 	check(solid,"all poses retain head and opaque clothing")
+	var stable_head := true
+	var moving_boots := true
+	for row in [3,4]:
+		for column in range(1,6):
+			for y in 32:
+				for x in 32:
+					var reference := atlas.get_pixel(x,row*56+y)
+					var actual := atlas.get_pixel(column*32+x,row*56+y)
+					# Importer alpha-border RGB is invisible; compare visible pixels.
+					if maxf(reference.a,actual.a) > 0.0:
+						stable_head = stable_head and reference == actual
+		moving_boots = moving_boots and atlas.get_region(Rect2i(0,row*56+44,32,12)).get_data() != atlas.get_region(Rect2i(32,row*56+44,32,12)).get_data()
+	check(stable_head and moving_boots,"side gait keeps the face stable while the feet animate")
 	check(InputMap.action_get_events("move_up").size() == 2 and InputMap.action_get_events("move_left")[1].physical_keycode == KEY_LEFT,"WASD and arrow bindings")
 	print("MYU_TEST_RESULT checks=%d failures=%d" % [checks,failures])
 	world.queue_free()
