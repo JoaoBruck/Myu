@@ -44,7 +44,7 @@ godot --headless --path godot --export-release Web /tmp/myu-web/index.html
 godot --headless --main-pack /tmp/myu-web/index.pck --quit-after 30
 ```
 
-O CI testa física e entrada reais, continuidade dos passos, clima automático, permanência da umidade, interação com a cadeira, diálogo e profundidade. O renderizador captura também a pose sentada, a interface de toque e os pontos de oclusão relatados, além de uma sequência em movimento para revisão da caminhada lateral. A publicação abre também o PCK exportado para detectar recursos ausentes.
+O CI testa física e entrada reais, continuidade dos passos, clima automático, permanência da umidade, interação com a cadeira, diálogo e profundidade. O renderizador captura também a pose sentada, a interface de toque e os pontos de oclusão relatados, além de uma sequência em movimento para revisão da caminhada lateral. A publicação abre também o PCK exportado para detectar recursos ausentes. O endereço `/godot/` encaminha para uma pasta própria da versão, mantendo os nomes originais do exportador e evitando misturar recursos antigos do cache com código novo.
 
 ## Documentação consultada
 
@@ -55,3 +55,5 @@ O CI testa física e entrada reais, continuidade dos passos, clima automático, 
 - [Luzes e sombras 2D](https://docs.godotengine.org/en/stable/tutorials/2d/2d_lights_and_shadows.html)
 - [Modulação de cor e alfa no shader 2D](https://docs.godotengine.org/en/stable/tutorials/shaders/shader_reference/canvas_item_shader.html)
 - [Tiny5](https://fonts.google.com/specimen/Tiny5)
+
+![Cadeira e diálogo, captura real no Godot](../docs/lume-seated.png)

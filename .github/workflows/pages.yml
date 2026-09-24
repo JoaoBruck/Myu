@@ -109,20 +109,32 @@ jobs:
             exit 1
           fi
 
+          # Keep Godot filenames intact in an immutable build directory.
+          # The stable entry redirects here, so old cached assets cannot mix with new code.
+          WEB_FOLDER="build-${GITHUB_SHA:0:12}"
+          mkdir -p "_site/godot/$WEB_FOLDER"
+          WEB_ENTRY="$GITHUB_WORKSPACE/_site/godot/$WEB_FOLDER/index"
           EXPORT_LOG=/tmp/godot-export.log
-          /tmp/godot/Godot_v4.7.2-stable_linux.x86_64 --headless --path godot --export-release "Web" "$GITHUB_WORKSPACE/_site/godot/index.html" 2>&1 | tee "$EXPORT_LOG"
+          /tmp/godot/Godot_v4.7.2-stable_linux.x86_64 --headless --path godot --export-release "Web" "$WEB_ENTRY.html" 2>&1 | tee "$EXPORT_LOG"
           if grep -E "SCRIPT ERROR:|Parse Error:|Failed to load script|Invalid call|Invalid access|Export failed" "$EXPORT_LOG"; then
             exit 1
           fi
-          test -f _site/godot/index.html
-          test -f _site/godot/index.wasm
-          test -f _site/godot/index.pck
+          test -f "$WEB_ENTRY.html"
+          test -f "$WEB_ENTRY.wasm"
+          test -f "$WEB_ENTRY.pck"
+          cat > _site/godot/index.html <<HTML
+          <!doctype html>
+          <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MYU — Lume Café</title>
+          <meta http-equiv="refresh" content="0;url=$WEB_FOLDER/index.html">
+          <script>location.replace("$WEB_FOLDER/index.html" + location.search + location.hash);</script>
+          </head><body style="background:#111827;color:#e8dcc7"><a href="$WEB_FOLDER/index.html">Abrir Lume Café</a></body></html>
+          HTML
 
           # Critical: boot the EXPORTED PCK itself with the engine.
           # This catches resources that existed in the checkout/editor but were
           # accidentally omitted from the Web package.
           PACK_LOG=/tmp/godot-exported-pack-runtime.log
-          /tmp/godot/Godot_v4.7.2-stable_linux.x86_64 --headless --main-pack "$GITHUB_WORKSPACE/_site/godot/index.pck" --quit-after 5 2>&1 | tee "$PACK_LOG"
+          /tmp/godot/Godot_v4.7.2-stable_linux.x86_64 --headless --main-pack "$WEB_ENTRY.pck" --quit-after 5 2>&1 | tee "$PACK_LOG"
           grep -q "MYU_HD_FILE_READY" "$PACK_LOG"
           grep -q "MYU_HD_SOURCE_SIZE=(1536, 864)" "$PACK_LOG"
           grep -q "MYU_HD_BACKGROUND_READY" "$PACK_LOG"
@@ -131,6 +143,7 @@ jobs:
           grep -q "MYU_REFLECTIONS_READY" "$PACK_LOG"
           grep -q "MYU_NO_FAKE_GLOWS_READY" "$PACK_LOG"
           grep -q "MYU_RAIN_READY" "$PACK_LOG"
+          grep -q "MYU_CAFE_SEAT_READY" "$PACK_LOG"
           if grep -E "SCRIPT ERROR:|Parse Error:|Failed to load|Invalid call|Invalid access|resource missing|unexpected HD source size" "$PACK_LOG"; then
             exit 1
           fi

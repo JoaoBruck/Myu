@@ -8,7 +8,7 @@ Movimento em oito direções, colisão nos pés, animações, sombra projetada e
 
 A pausa no café tem pose sentada e retrato originais, com um balão de pensamento. Placas com letras corrigidas e transparência suave dos objetos que encobrem a protagonista melhoram a leitura do cenário.
 
-![Lume Café, captura real do Godot](docs/lume-1740.png)
+![Pausa na cadeira externa, captura real do Godot com os controles de toque](docs/lume-seated.png)
 
 [Prévia da caminhada lateral no Godot](docs/lume-walk.mp4)
 
