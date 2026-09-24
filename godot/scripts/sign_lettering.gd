@@ -6,10 +6,10 @@ const INK := Color("c5cddb")
 var kind: StringName = &"CafeBoard"
 func _draw() -> void:
 	if kind == &"CafeBoard":
-		_line("CAFÉ",Rect2(484,351,62,16),10)
-		_line("IDEIAS",Rect2(484,373,62,16),10)
-		_line("PESSOAS",Rect2(484,395,62,16),10)
-		_line("DIAS FRIOS",Rect2(481,418,68,15),9)
+		_line("CAFÉS",Rect2(484,351,62,16),10)
+		_line("CHÁS",Rect2(484,373,62,16),10)
+		_line("BOLO",Rect2(484,395,62,16),10)
+		_line("DO DIA",Rect2(481,418,68,15),9)
 		var heart := PackedVector2Array([Vector2(512,437),Vector2(509,434),Vector2(506,437),Vector2(512,443),Vector2(518,437),Vector2(515,434),Vector2(512,437)])
 		for i in range(heart.size()-1):
 			draw_line((heart[i]*SCALE).round(),(heart[i+1]*SCALE).round(),INK,1.0)
