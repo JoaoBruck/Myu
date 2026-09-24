@@ -77,9 +77,9 @@ func _run() -> void:
 	await place(Vector2(1100,296))
 	await drive(Vector2.UP,75)
 	check(player.position.y*1.5 >= 257.0,"river bank blocks entry")
-	await place(Vector2(580,760))
+	await place(Vector2(1210,760))
 	await drive(Vector2.DOWN,85)
-	check(player.position.y*1.5 <= 864.2,"world boundary")
+	check(player.position.y*1.5 <= 864.2 and player.position.y*1.5 > 845.0,"world boundary reached through free pavement")
 	await place(Vector2(621,505))
 	var route_clear := true
 	for waypoint in [Vector2(1130,507),Vector2(1400,570),Vector2(1512,562),Vector2(1512,415),Vector2(1400,346),Vector2(1220,285),Vector2(1108,285)]:
@@ -234,6 +234,50 @@ func _run() -> void:
 	seat.sit_down()
 	check(seat.bubble.age < 0.1 and not seat.bubble.revealed,"a new sit resets the dialogue cleanly")
 	seat.stand_up()
+	var newsstand = world.get_node("DepthWorld/Newsstand")
+	await place(Vector2(800,640))
+	newsstand.interact()
+	check(not newsstand.active,"cannot talk to or teleport to distant newsstand")
+	await place(Vector2(650,790))
+	await drive(Vector2.DOWN,60)
+	check(player.position.y > 530.0 and player.position.y < 553.0,"newsstand base blocks passage on opposite pavement")
+	await place(Vector2(570,570))
+	var crossing_clear: bool = await walk_to(newsstand.APPROACH*1.5)
+	check(crossing_clear and newsstand.can_interact(),"crossing reaches newsstand conversation point")
+	controls._process(0.0)
+	check(controls.action_button.visible and controls.action_button.text.contains("Conversar"),"shared action button offers conversation near newsstand")
+	Input.parse_input_event(interact.duplicate())
+	await process_frame
+	await process_frame
+	check(newsstand.active and newsstand.bubble.visible and newsstand.bubble.text_label.text == "Não chegou nada novo no momento. Volte daqui a 4 dias.","E opens the requested newspaper seller dialogue")
+	check(newsstand.bubble.portrait_texture == null and newsstand.bubble.speaker_name == "Jornaleiro","seller dialogue is attributed separately from protagonist")
+	Input.parse_input_event(held.duplicate())
+	await process_frame
+	await process_frame
+	check(newsstand.active and not newsstand.bubble.revealed,"held E does not advance seller dialogue")
+	Input.parse_input_event(released.duplicate())
+	await process_frame
+	controls.action_button.pressed.emit()
+	check(newsstand.active and newsstand.bubble.revealed,"conversation button reveals complete line")
+	controls.action_button.pressed.emit()
+	check(not newsstand.active and not newsstand.bubble.visible,"conversation button closes finished line")
+	var counter_tap := tap.duplicate() as InputEventScreenTouch
+	counter_tap.position = newsstand.VENDOR
+	root.push_input(counter_tap,true)
+	await process_frame
+	await process_frame
+	check(newsstand.active,"touching the nearby counter starts conversation")
+	var counter_release := counter_tap.duplicate() as InputEventScreenTouch
+	counter_release.pressed = false
+	root.push_input(counter_release,true)
+	await drive(Vector2.UP,45)
+	await process_frame
+	check(not newsstand.active and not newsstand.bubble.visible,"walking away closes seller dialogue")
+	root.push_input(counter_tap.duplicate(),true)
+	await process_frame
+	await process_frame
+	check(not newsstand.active,"distant counter tap cannot start dialogue")
+	root.push_input(counter_release.duplicate(),true)
 	for probe in [["CafeBoard",Vector2(516,430)],["DirectionBoards",Vector2(1320,532)],["UtilityPoleLeft",Vector2(1120,710)],["ForegroundRight",Vector2(1468,620)]]:
 		await place(probe[1])
 		world.update_occlusion(1.0)

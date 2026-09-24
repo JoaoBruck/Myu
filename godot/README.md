@@ -6,6 +6,8 @@ Godot **4.7.2**, arte original de **1536 × 864**, viewport de **1024 × 576**. 
 | --- | --- | --- |
 | Caminhar | WASD / setas | Analógico |
 | Sentar na cadeira externa | E, perto da cadeira | Botão Sentar ou toque na cadeira |
+| Conversar na banca | E, perto do balcão | Botão Conversar ou toque no balcão |
+| Avançar / fechar conversa | E / Esc | Botão Continuar; afastar-se fecha |
 | Revelar a fala inteira | Espaço | Toque no balão |
 | Levantar | E, Esc ou movimento | Botão Levantar ou analógico |
 | Colisões visíveis (depuração) | F3 | — |
@@ -32,11 +34,14 @@ O cenário é uma ilustração plana. Colisões e recortes foram traçados manua
 
 ## Validação e arte
 
+A banca fica na calçada oposta, junto ao fim da faixa. Aproxime-se pela esquerda para conversar com o jornaleiro misterioso, dentro da janela de atendimento: “Não chegou nada novo no momento. Volte daqui a 4 dias.” Os quatro dias fazem parte da fala; não há temporizador ou desbloqueio de conteúdo. A base é sólida, e a camada frontal permite enxergar a personagem ao passar atrás da banca. A arte fria, com rosto oculto e mãos sobre o jornal, está registrada em `source_art/newsstand_asset.json` e é preparada por `tools/import_newsstand.gd`.
+
 Os originais estão em `source_art/`. O importador original converte os JPEGs recebidos em PNGs válidos e atlas de 32 × 56, preservando a roupa escura e removendo o fundo conectado à borda. A pose sentada e o retrato são PNGs transparentes novos, gerados com image_gen e preparados com `tools/import_seated.gd`; a arte antiga serviu apenas como referência visual. Prompts e proveniência constam em `source_art/generated_assets.json`. A fonte Tiny5 inclui sua licença OFL em `art/fonts/`.
 
 ```sh
 godot --headless --path godot --script res://tools/import_art.gd
 godot --headless --path godot --script res://tools/import_seated.gd
+godot --headless --path godot --script res://tools/import_newsstand.gd
 godot --headless --path godot --editor --quit
 godot --headless --path godot --script res://tests/test_lume.gd
 mkdir -p /tmp/myu-web

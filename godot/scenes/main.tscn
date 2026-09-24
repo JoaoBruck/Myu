@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 [ext_resource type="Script" path="res://scripts/pixel_scene.gd" id="1_scene"]
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="2_player"]
 [ext_resource type="Script" path="res://scripts/mobile_controls.gd" id="3_mobile"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" path="res://art/lume_day.png" id="7_background"]
 [ext_resource type="Script" path="res://scripts/collision_debug.gd" id="8_debug"]
 [ext_resource type="Script" path="res://scripts/cafe_seat.gd" id="9_seat"]
+[ext_resource type="Script" path="res://scripts/newsstand.gd" id="10_news"]
 [node name="Main" type="Node2D"]
 script = ExtResource("1_scene")
 [node name="Background" type="Sprite2D" parent="."]
@@ -27,6 +28,9 @@ y_sort_enabled = true
 z_index = 20
 [node name="Player" parent="DepthWorld" instance=ExtResource("2_player")]
 position = Vector2(414,337)
+[node name="Newsstand" type="Node2D" parent="DepthWorld"]
+position = Vector2(456,570)
+script = ExtResource("10_news")
 [node name="CollisionDebug" type="Node2D" parent="."]
 visible = false
 z_index = 90

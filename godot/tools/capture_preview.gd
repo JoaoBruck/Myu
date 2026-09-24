@@ -51,6 +51,18 @@ func _capture() -> void:
 	await _save("lume_stood_up")
 	controls.show_joystick = false
 	controls.queue_redraw()
+	var newsstand = world.get_node("DepthWorld/Newsstand")
+	world.player.position = newsstand.APPROACH
+	await _save("lume_newsstand_prompt")
+	newsstand.interact()
+	await create_timer(2.0).timeout
+	await _save("lume_newsstand_dialogue")
+	controls.show_joystick = true
+	controls.queue_redraw()
+	await _save("lume_newsstand_mobile")
+	newsstand.close_dialogue()
+	controls.show_joystick = false
+	controls.queue_redraw()
 	world.player.position = Vector2(414,337)
 	world.get_node("CollisionDebug").visible = true
 	await _save("lume_collision")
