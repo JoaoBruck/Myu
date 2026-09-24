@@ -23,7 +23,7 @@ func _initialize() -> void:
 		assert(backdrop.save_png("res://art/lume_%s.png" % period) == OK)
 	var source := Image.load_from_file("res://source_art/myu_reference.jpg")
 	assert(source != null and source.get_size() == Vector2i(1229,1536))
-	var atlas := Image.create(192,280,false,Image.FORMAT_RGBA8)
+	var atlas := Image.create(224,280,false,Image.FORMAT_RGBA8)
 	var row_y := [58,378,669,948,1206]
 	var row_h := [290,270,260,238,240]
 	for row in 5:
@@ -51,9 +51,36 @@ func _initialize() -> void:
 		var head := atlas.get_region(Rect2i(0,row*56,32,32))
 		for column in range(1,6):
 			atlas.blit_rect(head,Rect2i(0,0,32,32),Vector2i(column*32,row*56))
+		_build_side_cycle(atlas,row)
 	assert(atlas.save_png("res://art/myu_walk.png") == OK)
 	print("MYU_ART_IMPORT_OK")
 	quit()
+func _build_side_cycle(atlas: Image, row: int) -> void:
+	# The illustration repeats extended legs; articulate its two cutout legs
+	# around the hips to supply contact, passing and opposite-contact poses.
+	var legs := atlas.get_region(Rect2i(0,row*56+44,32,12))
+	var neutral := atlas.get_region(Rect2i(32,row*56,32,56))
+	atlas.blit_rect(neutral,Rect2i(0,0,32,56),Vector2i(192,row*56))
+	for column in 7:
+		for y in range(44,56):
+			for x in 32:
+				atlas.set_pixel(column*32+x,row*56+y,Color.TRANSPARENT)
+		var phase := TAU*float(column)/6.0
+		var travel := (1.0-cos(phase))*5.0 if column < 6 else 5.0
+		var swing := sin(phase)*(1.0 if row == 3 else -1.0) if column < 6 else 0.0
+		# Far leg first, near leg second. Hip pixels stay fixed; toes travel.
+		for part in ([0,1] if row == 3 else [1,0]):
+			var shift := travel if part == 0 else -travel
+			var lift := maxf(swing if part == 0 else -swing,0.0)*2.4
+			for y in 12:
+				var amount := clampf(float(y)/10.0,0.0,1.0)
+				for x in range(part*16,(part+1)*16):
+					var pixel := legs.get_pixel(x,y)
+					if pixel.a == 0.0:
+						continue
+					var target := Vector2i(roundi(x+shift*amount),44+y-roundi(lift*amount))
+					if Rect2i(0,0,32,56).has_point(target):
+						atlas.set_pixelv(Vector2i(column*32,row*56)+target,pixel)
 func _is_matte(c: Color) -> bool:
 	return c.r < 0.17 and c.g < 0.20 and c.b < 0.29 and c.b > c.r*1.04 and c.g >= c.r*0.90
 func _remove_border_matte(img: Image) -> void:

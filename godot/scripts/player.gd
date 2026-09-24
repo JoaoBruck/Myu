@@ -69,8 +69,8 @@ func _build_frames() -> SpriteFrames:
 	for row in 4:
 		var suffix := String(DIRECTIONS[row])
 		_add_animation(frames,StringName("walk_"+suffix),row+1,STEP_FRAMES,10.0)
-		# Only front idle is supplied; other directions hold a supplied pose.
-		_add_animation(frames,StringName("idle_"+suffix),0 if row == 0 else row+1,4 if row == 0 else 1,1.6,0 if row < 2 else 1)
+		# Front idle and back pose come from the sheet; side idle plants both feet.
+		_add_animation(frames,StringName("idle_"+suffix),0 if row == 0 else row+1,4 if row == 0 else 1,1.6,0 if row < 2 else 6)
 	return frames
 func _add_animation(frames: SpriteFrames, animation: StringName, row: int, count: int, fps: float, start: int = 0) -> void:
 	frames.add_animation(animation)

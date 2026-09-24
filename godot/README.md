@@ -15,7 +15,7 @@ A chuva varia automaticamente entre garoa, chuva moderada e pausas, com transiç
 
 CharacterBody2D flutuante, move_and_slide, aceleração, frenagem e diagonal normalizada. A cápsula de colisão fica nos pés. A fase dos passos acompanha a distância realmente percorrida, inclusive ao deslizar junto a obstáculos, e continua ao mudar de direção. Encostar em uma parede interrompe a caminhada. O analógico também controla a cadência.
 
-O importador registra as poses em pivôs medidos no quadril, com uma escala fixa por direção. Os perfis laterais compartilham a mesma cabeça, preservando as poses originais do corpo e dos pés para evitar que o rosto e o cabelo mudem durante cada passo. Não há espelhamento da personagem. A parada mantém a direção.
+O importador registra as poses em pivôs medidos no quadril, com uma escala fixa por direção. Os perfis laterais compartilham a mesma cabeça, preservando o desenho original para evitar que o rosto e o cabelo mudem durante cada passo. Um pequeno rig de recortes articula as duas pernas entre contato, passagem e contato oposto; a parada lateral usa uma pose própria com os dois pés apoiados. Não há espelhamento da personagem. A parada mantém a direção.
 
 As bases de colisão e silhuetas visuais em `data/lume_geometry.gd` são independentes. Y-sort organiza a profundidade. Barras de grades preservam os vãos. A sombra tem contato no chão e projeção da pose atual, influenciada pelas luminárias próximas.
 
