@@ -5,7 +5,7 @@
 [ext_resource type="Script" path="res://scripts/rain.gd" id="4_rain"]
 [ext_resource type="Script" path="res://scripts/reflections.gd" id="5_reflections"]
 [ext_resource type="Script" path="res://scripts/atmosphere.gd" id="6_atmosphere"]
-[ext_resource type="Texture2D" path="res://art/lume_day.png" id="7_background"]
+[ext_resource type="Texture2D" path="res://art/lume_courtyard.png" id="7_background"]
 [ext_resource type="Script" path="res://scripts/collision_debug.gd" id="8_debug"]
 [ext_resource type="Script" path="res://scripts/cafe_seat.gd" id="9_seat"]
 [ext_resource type="Script" path="res://scripts/newsstand.gd" id="10_news"]
@@ -29,7 +29,7 @@ z_index = 20
 [node name="Player" parent="DepthWorld" instance=ExtResource("2_player")]
 position = Vector2(414,337)
 [node name="Newsstand" type="Node2D" parent="DepthWorld"]
-position = Vector2(456,570)
+position = Vector2(141,542)
 script = ExtResource("10_news")
 [node name="CollisionDebug" type="Node2D" parent="."]
 visible = false

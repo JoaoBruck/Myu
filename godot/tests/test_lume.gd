@@ -238,11 +238,12 @@ func _run() -> void:
 	await place(Vector2(800,640))
 	newsstand.interact()
 	check(not newsstand.active,"cannot talk to or teleport to distant newsstand")
-	await place(Vector2(650,790))
-	await drive(Vector2.DOWN,60)
-	check(player.position.y > 530.0 and player.position.y < 553.0,"newsstand base blocks passage on opposite pavement")
+	await place(Vector2(220,850))
+	await drive(Vector2.UP,50)
+	check(player.position.y > 520.0 and player.position.y < 555.0,"newsstand base blocks passage on opposite pavement")
 	await place(Vector2(570,570))
-	var crossing_clear: bool = await walk_to(newsstand.APPROACH*1.5)
+	var crossing_clear: bool = await walk_to(Vector2(580,838))
+	crossing_clear = crossing_clear and await walk_to(newsstand.APPROACH*1.5)
 	check(crossing_clear and newsstand.can_interact(),"crossing reaches newsstand conversation point")
 	controls._process(0.0)
 	check(controls.action_button.visible and controls.action_button.text.contains("Conversar"),"shared action button offers conversation near newsstand")
@@ -262,7 +263,7 @@ func _run() -> void:
 	controls.action_button.pressed.emit()
 	check(not newsstand.active and not newsstand.bubble.visible,"conversation button closes finished line")
 	var counter_tap := tap.duplicate() as InputEventScreenTouch
-	counter_tap.position = newsstand.VENDOR
+	counter_tap.position = newsstand.vendor
 	root.push_input(counter_tap,true)
 	await process_frame
 	await process_frame
@@ -278,14 +279,26 @@ func _run() -> void:
 	await process_frame
 	check(not newsstand.active,"distant counter tap cannot start dialogue")
 	root.push_input(counter_release.duplicate(),true)
-	for probe in [["CafeBoard",Vector2(516,430)],["DirectionBoards",Vector2(1320,532)],["UtilityPoleLeft",Vector2(1120,710)],["ForegroundRight",Vector2(1468,620)]]:
+	for probe in [["CafeBoard",Vector2(516,430)],["DirectionBoards",Vector2(1320,532)],["ForegroundRight",Vector2(1468,620)]]:
 		await place(probe[1])
 		world.update_occlusion(1.0)
 		check(world.depth_world.get_node(probe[0]).modulate.a < 0.30,"player remains visible behind "+probe[0])
 	await place(Vector2(516,488))
 	world.update_occlusion(1.0)
 	check(world.depth_world.get_node("CafeBoard").modulate.a > 0.99,"foreground returns to opaque when player is in front")
-	check(world.depth_world.has_node("UtilityPoleLeft") and world.depth_world.has_node("UtilityPoleRight"),"utility poles have independent silhouettes")
+	check(not world.depth_world.has_node("UtilityPoleLeft") and not world.collision_root.has_node("UtilityBase"),"removed foreground utilities leave no invisible collisions")
+	await place(Vector2(220,650))
+	newsstand._process(1.0)
+	check(not newsstand.can_interact() and newsstand.visual.modulate.a < 0.30,"kiosk reveals a player behind it without allowing conversation through its back")
+	await place(newsstand.APPROACH*1.5)
+	newsstand._process(1.0)
+	check(newsstand.visual.modulate.a > 0.99 and newsstand.z_index == -1,"front and side approach keep the kiosk solid behind the player")
+	var old_art := load("res://art/lume_day.png") as Texture2D
+	var old_pixels := old_art.get_image().get_region(Rect2i(0,0,1536,464))
+	var new_pixels: Image = world.background.texture.get_image().get_region(Rect2i(0,0,1536,464))
+	old_pixels.convert(Image.FORMAT_RGBA8)
+	new_pixels.convert(Image.FORMAT_RGBA8)
+	check(old_pixels.get_data() == new_pixels.get_data(),"cafe, chair, tree and river retain approved artwork exactly")
 	print("MYU_TEST_RESULT checks=%d failures=%d" % [checks,failures])
 	world.queue_free()
 	await process_frame

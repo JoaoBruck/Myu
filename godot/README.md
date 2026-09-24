@@ -24,7 +24,7 @@ O importador registra as poses em pivôs medidos no quadril, com uma escala fixa
 
 As bases de colisão e silhuetas visuais em `data/lume_geometry.gd` são independentes. Y-sort organiza a profundidade. Barras de grades preservam os vãos. A sombra tem contato no chão e projeção da pose atual, influenciada pelas luminárias próximas.
 
-Os postes da rua têm silhuetas separadas. Um objeto que cobre a personagem torna seu recorte de primeiro plano parcialmente transparente e volta à opacidade normal quando ela sai de trás dele. As letras da lousa e das placas são redesenhadas com Tiny5, incluindo os acentos, nas duas camadas de profundidade.
+Um objeto que cobre a personagem torna seu recorte de primeiro plano parcialmente transparente e volta à opacidade normal quando ela sai de trás dele. As letras da lousa e das placas são redesenhadas com Tiny5, incluindo os acentos, nas duas camadas de profundidade.
 
 ## Pausa no café
 
@@ -34,7 +34,7 @@ O cenário é uma ilustração plana. Colisões e recortes foram traçados manua
 
 ## Validação e arte
 
-A banca fica na calçada oposta, junto ao fim da faixa. Aproxime-se pela esquerda para conversar com o jornaleiro misterioso, dentro da janela de atendimento: “Não chegou nada novo no momento. Volte daqui a 4 dias.” Os quatro dias fazem parte da fala; não há temporizador ou desbloqueio de conteúdo. A base é sólida, e a camada frontal permite enxergar a personagem ao passar atrás da banca. A arte fria, com rosto oculto e mãos sobre o jornal, está registrada em `source_art/newsstand_asset.json` e é preparada por `tools/import_newsstand.gd`.
+A banca ocupa um recuo pavimentado no canto inferior esquerdo, do outro lado da rua. A faixa continua livre e conecta-se à área de atendimento pela direita. Aproxime-se pela frente ou pela direita para conversar com a sombra escura dentro da banca: “Não chegou nada novo no momento. Volte daqui a 4 dias.” Os quatro dias fazem parte da fala; não há temporizador ou desbloqueio de conteúdo. A base sólida acompanha a diagonal do balcão; passar atrás revela a personagem, mas não permite conversar através da parede. O vendedor não possui capuz, roupa, rosto ou anatomia humana. A nova arte usa agrupamentos de pixels mais legíveis e menos detalhes miúdos. O balão aparece ao lado, sobre a rua, sem cobrir o vendedor. Prompts e proveniência estão em `source_art/newsstand_asset.json` e `source_art/courtyard_asset.json`. Os respectivos importadores preparam os PNGs usados pelo jogo. A nova calçada substitui os telhados do canto esquerdo; os postes e fios que cruzavam a rua foram removidos também das colisões e da profundidade. O café, a cadeira, a árvore e o rio mantêm os pixels aprovados da imagem original.
 
 Os originais estão em `source_art/`. O importador original converte os JPEGs recebidos em PNGs válidos e atlas de 32 × 56, preservando a roupa escura e removendo o fundo conectado à borda. A pose sentada e o retrato são PNGs transparentes novos, gerados com image_gen e preparados com `tools/import_seated.gd`; a arte antiga serviu apenas como referência visual. Prompts e proveniência constam em `source_art/generated_assets.json`. A fonte Tiny5 inclui sua licença OFL em `art/fonts/`.
 
@@ -42,6 +42,7 @@ Os originais estão em `source_art/`. O importador original converte os JPEGs re
 godot --headless --path godot --script res://tools/import_art.gd
 godot --headless --path godot --script res://tools/import_seated.gd
 godot --headless --path godot --script res://tools/import_newsstand.gd
+godot --headless --path godot --script res://tools/import_courtyard.gd
 godot --headless --path godot --editor --quit
 godot --headless --path godot --script res://tests/test_lume.gd
 mkdir -p /tmp/myu-web
@@ -62,3 +63,5 @@ O CI testa física e entrada reais, continuidade dos passos, clima automático, 
 - [Tiny5](https://fonts.google.com/specimen/Tiny5)
 
 ![Cadeira e diálogo, captura real no Godot](../docs/lume-seated.png)
+
+![Banca e calçada, captura real no Godot](../docs/lume-newsstand.png)

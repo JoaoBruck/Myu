@@ -34,7 +34,7 @@ func _capture() -> void:
 	weather.queue_redraw()
 	await _save("lume_rain")
 	weather.set_process(true)
-	for entry in [["board",Vector2(516,429)],["sign",Vector2(1338,557)],["lamp",Vector2(1085,393)],["river",Vector2(1250,290)],["utility_left",Vector2(1120,710)],["utility_right",Vector2(1155,730)],["edge",Vector2(1468,620)]]:
+	for entry in [["board",Vector2(516,429)],["sign",Vector2(1338,557)],["lamp",Vector2(1085,393)],["river",Vector2(1250,290)],["edge",Vector2(1468,620)]]:
 		world.player.position = entry[1]*(2.0/3.0)
 		await _save("lume_"+entry[0])
 	world.player.position = Vector2(340,461)*(2.0/3.0)
@@ -61,6 +61,8 @@ func _capture() -> void:
 	controls.queue_redraw()
 	await _save("lume_newsstand_mobile")
 	newsstand.close_dialogue()
+	world.player.position = Vector2(146,433)
+	await _save("lume_newsstand_behind")
 	controls.show_joystick = false
 	controls.queue_redraw()
 	world.player.position = Vector2(414,337)

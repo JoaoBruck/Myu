@@ -1,7 +1,7 @@
 extends Node2D
 const SignLettering := preload("res://scripts/sign_lettering.gd")
 const Geometry = preload("res://data/lume_geometry.gd")
-const DAY := preload("res://art/lume_day.png")
+const DAY := preload("res://art/lume_courtyard.png")
 const GRADE := preload("res://shaders/time_grade.gdshader")
 const WORLD_SIZE := Vector2(1024,576)
 # 17:40 is the art direction, not a clock or a selectable time of day.

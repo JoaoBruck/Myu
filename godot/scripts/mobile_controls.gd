@@ -72,8 +72,9 @@ func _interact() -> void:
 	else:
 		newsstand.interact()
 func _layout_joystick() -> void:
-	joystick_radius = clampf(size.y*0.103,45.0,68.0)
-	joystick_center = Vector2(joystick_radius+32.0,size.y-joystick_radius-30.0)
+	# Keep the thumb control in the corner, clear of the new service window.
+	joystick_radius = clampf(size.y*0.08,40.0,54.0)
+	joystick_center = Vector2(joystick_radius+20.0,size.y-joystick_radius-18.0)
 	release_joystick()
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
@@ -110,6 +111,6 @@ func _notification(what: int) -> void:
 func _draw() -> void:
 	if not show_joystick:
 		return
-	draw_circle(joystick_center,joystick_radius,Color(0.04,0.04,0.09,0.40))
+	draw_circle(joystick_center,joystick_radius,Color(0.04,0.04,0.09,0.28))
 	draw_arc(joystick_center,joystick_radius,0,TAU,48,Color(0.84,0.78,0.88,0.35),2.0,true)
 	draw_circle(joystick_center+knob,22.0,Color(0.81,0.76,0.88,0.60))
