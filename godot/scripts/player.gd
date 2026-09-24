@@ -4,8 +4,10 @@ const ACCELERATION := 1100.0
 const DECELERATION := 1450.0
 const STRIDE_DISTANCE := 68.0
 const STEP_FRAMES := 6
+const SEATED := preload("res://art/myu_seated.png")
 const SHEET := preload("res://art/myu_walk.png")
 const DIRECTIONS: Array[StringName] = [&"down", &"up", &"right", &"left"]
+var seated := false
 var touch_input := Vector2.ZERO
 var facing: StringName = &"down"
 var moved_distance := 0.0
@@ -23,6 +25,10 @@ func _physics_process(delta: float) -> void:
 	var keyboard := Input.get_vector("move_left","move_right","move_up","move_down")
 	step_motion(keyboard if keyboard.length_squared() >= touch_input.length_squared() else touch_input,delta)
 func step_motion(input_vector: Vector2, delta: float) -> void:
+	if seated:
+		velocity = Vector2.ZERO
+		moved_distance = 0.0
+		return
 	var direction := input_vector.limit_length()
 	var moving := direction.length_squared() > 0.001
 	if moving:
@@ -42,6 +48,9 @@ func step_motion(input_vector: Vector2, delta: float) -> void:
 	else:
 		_play_idle()
 func _play_idle() -> void:
+	if seated:
+		sprite.play(&"seated")
+		return
 	var animation := StringName("idle_"+String(facing))
 	if sprite.animation != animation or not sprite.is_playing():
 		sprite.play(animation)
@@ -60,6 +69,13 @@ func stop_motion() -> void:
 	moved_distance = 0.0
 	if is_instance_valid(sprite):
 		_play_idle()
+func set_seated(value: bool, point: Vector2) -> void:
+	seated = value
+	stop_motion()
+	global_position = point
+	facing = &"right" if seated else &"down"
+	sprite.position = Vector2(0,-63 if seated else -56)
+	_play_idle()
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
 		stop_motion()
@@ -71,6 +87,8 @@ func _build_frames() -> SpriteFrames:
 		_add_animation(frames,StringName("walk_"+suffix),row+1,STEP_FRAMES,10.0)
 		# Front idle and back pose come from the sheet; side idle plants both feet.
 		_add_animation(frames,StringName("idle_"+suffix),0 if row == 0 else row+1,4 if row == 0 else 1,1.6,0 if row < 2 else 6)
+	frames.add_animation(&"seated")
+	frames.add_frame(&"seated",SEATED)
 	return frames
 func _add_animation(frames: SpriteFrames, animation: StringName, row: int, count: int, fps: float, start: int = 0) -> void:
 	frames.add_animation(animation)

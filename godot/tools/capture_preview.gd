@@ -34,9 +34,23 @@ func _capture() -> void:
 	weather.queue_redraw()
 	await _save("lume_rain")
 	weather.set_process(true)
-	for entry in [["board",Vector2(516,429)],["sign",Vector2(1338,557)],["lamp",Vector2(1085,393)],["river",Vector2(1250,290)]]:
+	for entry in [["board",Vector2(516,429)],["sign",Vector2(1338,557)],["lamp",Vector2(1085,393)],["river",Vector2(1250,290)],["utility_left",Vector2(1120,710)],["utility_right",Vector2(1155,730)],["edge",Vector2(1468,620)]]:
 		world.player.position = entry[1]*(2.0/3.0)
 		await _save("lume_"+entry[0])
+	world.player.position = Vector2(340,461)*(2.0/3.0)
+	await _save("lume_chair_prompt")
+	var seat = world.get_node("SeatInteraction")
+	seat.sit_down()
+	await create_timer(1.8).timeout
+	await _save("lume_seated_dialogue")
+	var controls = world.get_node("MobileUI/MobileControls")
+	controls.show_joystick = true
+	controls.queue_redraw()
+	await _save("lume_seated_mobile")
+	seat.stand_up()
+	await _save("lume_stood_up")
+	controls.show_joystick = false
+	controls.queue_redraw()
 	world.player.position = Vector2(414,337)
 	world.get_node("CollisionDebug").visible = true
 	await _save("lume_collision")

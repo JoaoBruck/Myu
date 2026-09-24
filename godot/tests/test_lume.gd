@@ -141,7 +141,7 @@ func _run() -> void:
 	check(player.velocity.length() < 0.01,"key release stops movement")
 	player.set_physics_process(false)
 	var controls = world.get_node("MobileUI/MobileControls")
-	var clean_ui := controls.find_children("*","Button",true,false).is_empty()
+	var clean_ui: bool = controls.find_children("*","Button",true,false).size() == 1 and controls.action_button.name == &"ChairAction"
 	for label in controls.find_children("*","Label",true,false):
 		clean_ui = clean_ui and not label.text.contains("17:40") and not label.text.contains("Chuva")
 	check(clean_ui,"no clock, weather selector or time label in the UI")
@@ -182,6 +182,64 @@ func _run() -> void:
 		moving_boots = moving_boots and atlas.get_region(Rect2i(0,row*56+44,32,12)).get_data() != atlas.get_region(Rect2i(32,row*56+44,32,12)).get_data()
 	check(stable_head and moving_boots,"side gait keeps the face stable while the feet animate")
 	check(InputMap.action_get_events("move_up").size() == 2 and InputMap.action_get_events("move_left")[1].physical_keycode == KEY_LEFT,"WASD and arrow bindings")
+	var seat = world.get_node("SeatInteraction")
+	await place(Vector2(800,640))
+	seat.toggle()
+	check(not player.seated and not seat.occupied,"cannot sit or teleport from far away")
+	await place(Vector2(340,461))
+	controls._process(0.0)
+	check(seat.can_interact() and controls.action_button.visible,"chair action appears within reach")
+	var interact := InputEventKey.new()
+	interact.physical_keycode = KEY_E
+	interact.pressed = true
+	Input.parse_input_event(interact)
+	await process_frame
+	await process_frame
+	check(player.seated and seat.occupied and player.sprite.animation == &"seated","E seats the player using the new sprite")
+	var held := interact.duplicate() as InputEventKey
+	held.echo = true
+	Input.parse_input_event(held)
+	await process_frame
+	await process_frame
+	check(seat.occupied,"holding E does not toggle repeatedly")
+	var released := interact.duplicate() as InputEventKey
+	released.pressed = false
+	Input.parse_input_event(released)
+	var seated_position := player.position
+	await drive(Vector2.RIGHT,10)
+	check(player.position == seated_position and player.velocity == Vector2.ZERO,"seated pose does not slide")
+	check(seat.bubble.visible and seat.bubble.text_label.text == "Quando será que sai a continuação daquele livro?","requested thought appears in the bubble")
+	seat.bubble.reveal()
+	check(seat.bubble.text_label.visible_characters == -1,"dialogue can be revealed without waiting")
+	player.notification(Node.NOTIFICATION_APPLICATION_FOCUS_OUT)
+	check(player.seated and player.sprite.animation == &"seated","focus loss preserves sitting pose")
+	controls.action_button.pressed.emit()
+	check(not player.seated and not seat.bubble.visible and seat._exit_is_clear(player.position),"button stands up onto clear pavement and closes dialogue")
+	await place(Vector2(340,461))
+	var tap := InputEventScreenTouch.new()
+	tap.index = 4
+	tap.position = Vector2(339,379)*(2.0/3.0)
+	tap.pressed = true
+	# Pointer fixtures use viewport coordinates; a headless window is only 64x64.
+	root.push_input(tap,true)
+	await process_frame
+	await process_frame
+	check(player.seated,"touching the nearby chair also sits down")
+	var tap_release := tap.duplicate() as InputEventScreenTouch
+	tap_release.pressed = false
+	root.push_input(tap_release,true)
+	seat.stand_up()
+	seat.sit_down()
+	check(seat.bubble.age < 0.1 and not seat.bubble.revealed,"a new sit resets the dialogue cleanly")
+	seat.stand_up()
+	for probe in [["CafeBoard",Vector2(516,430)],["DirectionBoards",Vector2(1320,532)],["UtilityPoleLeft",Vector2(1120,710)],["ForegroundRight",Vector2(1468,620)]]:
+		await place(probe[1])
+		world.update_occlusion(1.0)
+		check(world.depth_world.get_node(probe[0]).modulate.a < 0.30,"player remains visible behind "+probe[0])
+	await place(Vector2(516,488))
+	world.update_occlusion(1.0)
+	check(world.depth_world.get_node("CafeBoard").modulate.a > 0.99,"foreground returns to opaque when player is in front")
+	check(world.depth_world.has_node("UtilityPoleLeft") and world.depth_world.has_node("UtilityPoleRight"),"utility poles have independent silhouettes")
 	print("MYU_TEST_RESULT checks=%d failures=%d" % [checks,failures])
 	world.queue_free()
 	await process_frame

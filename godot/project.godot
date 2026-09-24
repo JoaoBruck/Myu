@@ -45,3 +45,12 @@ debug_collision={
 "deadzone":0.2,
 "events":[Object(InputEventKey,"physical_keycode":4194334)]
 }
+
+interact={
+"deadzone":0.2,
+"events":[Object(InputEventKey,"physical_keycode":69)]
+}
+reveal_thought={
+"deadzone":0.2,
+"events":[Object(InputEventKey,"physical_keycode":32)]
+}

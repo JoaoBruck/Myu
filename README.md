@@ -4,7 +4,9 @@
 
 Movimento em oito direções, colisão nos pés, animações, sombra projetada e profundidade dos objetos. **17:40 é a identidade visual**: entardecer frio e luzes quentes do café. Chuva automática, sem relógio ou seletores na tela.
 
-**WASD/setas** para andar e **F3** para visualizar colisões. No celular, use o analógico.
+**WASD/setas** para andar. Perto da cadeira externa, **E** para sentar e **E/Esc** para levantar. **Espaço** revela a fala inteira. No celular, use o analógico e os botões **Sentar/Levantar**. **F3** mostra as colisões.
+
+A pausa no café tem pose sentada e retrato originais, com um balão de pensamento. Placas com letras corrigidas e transparência suave dos objetos que encobrem a protagonista melhoram a leitura do cenário.
 
 ![Lume Café, captura real do Godot](docs/lume-1740.png)
 

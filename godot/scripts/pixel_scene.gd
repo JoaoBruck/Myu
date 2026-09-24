@@ -1,4 +1,5 @@
 extends Node2D
+const SignLettering := preload("res://scripts/sign_lettering.gd")
 const Geometry = preload("res://data/lume_geometry.gd")
 const DAY := preload("res://art/lume_day.png")
 const GRADE := preload("res://shaders/time_grade.gdshader")
@@ -8,6 +9,7 @@ const AMBIENT := Color(0.74,0.82,1.0)
 const CHARACTER_AMBIENT := Color(0.82,0.88,1.0)
 var grade: ShaderMaterial
 var foreground: Array[Polygon2D] = []
+var occlusion_entries: Array[Dictionary] = []
 @onready var background: Sprite2D = $Background
 @onready var collision_root: Node2D = $CollisionGeometry
 @onready var depth_world: Node2D = $DepthWorld
@@ -21,10 +23,11 @@ func _ready() -> void:
 	background.material = grade
 	_build_collision_geometry()
 	_build_depth_occluders()
+	_build_base_lettering()
 	_apply_palette()
 	for marker in ["MYU_HD_FILE_READY","MYU_HD_SOURCE_SIZE=(1536, 864)","MYU_PIXEL_BACKGROUND_READY","MYU_HD_BACKGROUND_READY","MYU_COLLISION_READY","MYU_DEPTH_READY","MYU_LUME_1740_READY"]:
 		print(marker)
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if grade == null:
 		return
 	var warmth := 0.0
@@ -34,6 +37,7 @@ func _process(_delta: float) -> void:
 	grade.set_shader_parameter("cloud_cover",$Weather.intensity*0.035)
 	$Reflections.wetness = $Weather.wetness
 	$Reflections.rain_intensity = $Weather.intensity
+	update_occlusion(delta)
 func _apply_palette() -> void:
 	background.texture = DAY
 	grade.set_shader_parameter("ambient",AMBIENT)
@@ -72,6 +76,26 @@ func _build_depth_occluders() -> void:
 		holder.add_child(polygon)
 		depth_world.add_child(holder)
 		foreground.append(polygon)
+		occlusion_entries.append({"holder":holder,"polygon":Geometry.to_world(entry.polygon),"base":holder.position.y})
+		if entry.name in ["CafeBoard","DirectionBoards"]:
+			var letters := SignLettering.new()
+			letters.kind = StringName(entry.name)
+			letters.position = -holder.position
+			holder.add_child(letters)
+func _build_base_lettering() -> void:
+	for kind in [&"CafeBoard",&"DirectionBoards"]:
+		var letters := SignLettering.new()
+		letters.kind = kind
+		letters.z_index = 1
+		add_child(letters)
+func update_occlusion(delta: float) -> void:
+	var offset := Vector2(-24,-102) if not player.seated else Vector2(-23,-101)
+	var size := Vector2(48,99) if not player.seated else Vector2(46,89)
+	var area := Geometry.rect(player.position.x+offset.x,player.position.y+offset.y,size.x,size.y)
+	for entry in occlusion_entries:
+		var covered: bool = player.position.y < entry.base and not Geometry2D.intersect_polygons(area,entry.polygon).is_empty()
+		var target := 0.24 if covered else 1.0
+		entry.holder.modulate.a = lerpf(entry.holder.modulate.a,target,1.0-exp(-delta*14.0))
 func _unhandled_key_input(event: InputEvent) -> void:
 	if event.is_action_pressed("debug_collision"):
 		$CollisionDebug.visible = not $CollisionDebug.visible

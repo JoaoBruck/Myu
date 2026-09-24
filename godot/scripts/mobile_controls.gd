@@ -5,8 +5,10 @@ var joystick_radius := 59.0
 var knob := Vector2.ZERO
 var touch_id := -1
 var show_joystick := false
+var action_button: Button
 var hint: Label
 var hint_age := 0.0
+@onready var seat = get_node("../../SeatInteraction")
 @onready var player = get_node("../../DepthWorld/Player")
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -26,10 +28,38 @@ func _ready() -> void:
 	hint.offset_bottom = -10
 	get_viewport().size_changed.connect(_layout_joystick)
 	_layout_joystick()
+	_build_interaction_button()
 func _process(delta: float) -> void:
+	action_button.visible = seat.can_interact()
+	action_button.text = ("Levantar" if seat.occupied else "Sentar") if show_joystick else ("E · Levantar" if seat.occupied else "E · Sentar")
 	hint_age += delta
 	hint.visible = not show_joystick
 	hint.modulate.a = 1.0-smoothstep(5.0,8.0,hint_age)
+func _build_interaction_button() -> void:
+	action_button = Button.new()
+	action_button.name = "ChairAction"
+	action_button.focus_mode = Control.FOCUS_NONE
+	action_button.add_theme_font_override("font",preload("res://art/fonts/Tiny5-Regular.ttf"))
+	action_button.add_theme_font_size_override("font_size",22)
+	action_button.add_theme_color_override("font_color",Color("e8dcc7"))
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.06,0.09,0.14,0.93)
+	style.border_color = Color("91a0b6")
+	style.set_border_width_all(2)
+	style.set_corner_radius_all(2)
+	action_button.add_theme_stylebox_override("normal",style)
+	var active := style.duplicate() as StyleBoxFlat
+	active.bg_color = Color("34485e")
+	action_button.add_theme_stylebox_override("hover",active)
+	action_button.add_theme_stylebox_override("pressed",active)
+	add_child(action_button)
+	action_button.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
+	action_button.offset_left = -166
+	action_button.offset_top = -99
+	action_button.offset_right = -28
+	action_button.offset_bottom = -43
+	action_button.pressed.connect(seat.toggle)
+	action_button.visible = false
 func _layout_joystick() -> void:
 	joystick_radius = clampf(size.y*0.103,45.0,68.0)
 	joystick_center = Vector2(joystick_radius+32.0,size.y-joystick_radius-30.0)

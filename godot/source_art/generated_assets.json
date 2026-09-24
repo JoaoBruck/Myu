@@ -1,0 +1,17 @@
+{
+  "method": "Built-in image_gen",
+  "date": "2026-09-24",
+  "references": "Current game sprite sheet is authoritative. The old reference is inspiration only; none of its pixels are imported.",
+  "assets": [
+    {
+      "source": "myu_seated_generated.png",
+      "runtime": "../art/myu_seated.png",
+      "prompt": "Use case: stylized-concept. Asset type: NEW transparent pixel-art seated character sprite for a Godot top-down 2D game. Reference image 1 is the CURRENT protagonist sprite sheet and is the authoritative identity/proportions/clothes. Reference image 2 is an OLD design sheet used ONLY as loose character inspiration; do NOT crop, extract, reuse or reproduce anything from that sheet. Draw a completely new seated pose of the current same young woman: dark brown messy bun, side fringe, pale face, blue scarf, muted brown/plum jacket, short dark skirt, dark tights, brown boots, crossbody bag with tiny cream star charm. Three-quarter view facing SCREEN RIGHT, slight top-down camera like an RPG. She sits on an INVISIBLE café chair: upright relaxed torso, hips seated, thighs angled right and approximately horizontal, knees bent 90 degrees, boots hanging down close together, both hands relaxed in her lap, quiet thoughtful expression. Do NOT draw the chair, table or floor. Compact chibi proportions MATCH the CURRENT sprite, large head, body shorter when seated; silhouette must read sitting rather than crouching. Crisp deliberate low-resolution pixel clusters and dark plum one-pixel outlines; logical character footprint about 32 wide by 44 tall pixels, enlarged uniformly with nearest-neighbor appearance. Sparse coherent palette, cool blue scarf and muted plum coat, no soft painting, no gradients or antialiasing. One full character only centered, generous transparent padding. Actual transparent alpha background, no checkerboard painted into image, no shadow, no glow, no lettering, no borders, no watermark. Complete head, bun, hands and boots visible."
+    },
+    {
+      "source": "myu_portrait_generated.png",
+      "runtime": "../art/myu_portrait.png",
+      "prompt": "Use case: stylized-concept. Asset type: NEW transparent pixel-art dialogue portrait icon for the same Godot game protagonist. Image 1 is the newly drawn seated protagonist: keep her identity, brown bun and side fringe, pale face, blue scarf, muted plum coat. Image 2 is the current game sprite sheet, defining the simple pixel style. Draw a NEW head-and-shoulders portrait, three-quarter facing screen RIGHT, gaze slightly upward with a quietly curious, thoughtful expression, relaxed closed mouth. The head with full bun and scarf fills a square icon, generous 8% transparent padding, shoulders end naturally at bottom. Authentic crisp low-resolution pixel art, logical 48 by 48 pixels enlarged uniformly; limited cohesive cool plum/brown/blue palette, dark plum outlines, no gradients, no smooth painted shading, no lettering or frame. Real transparent alpha background, do not paint checkerboard. It will appear beside the thought 'Quando será que sai a continuação daquele livro?' but DO NOT DRAW ANY TEXT or speech bubble inside this asset. One portrait only, no sprite sheet. Do not reuse or crop the old character reference sheet; this is a newly drawn facial expression."
+    }
+  ]
+}

@@ -26,6 +26,13 @@ func _process(delta: float) -> void:
 	length_factor = lerpf(length_factor,target_length,blend)
 	queue_redraw()
 func _draw() -> void:
+	if get_parent().seated:
+		var contact := PackedVector2Array()
+		for i in 24:
+			var angle := TAU*float(i)/24.0
+			contact.append(Vector2(7+cos(angle)*10.0,-10+sin(angle)*3.0))
+		draw_colored_polygon(contact,Color(0.02,0.025,0.05,0.28))
+		return
 	var points := PackedVector2Array()
 	for i in 24:
 		var angle := TAU*float(i)/24.0
